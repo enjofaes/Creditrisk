@@ -1,0 +1,94 @@
+---
+title: "Building a Points-Based Scorecard"
+description: "Translate logistic regression coefficients into integer scorecard points using the PDO scaling method."
+module: "credit-scoring"
+order: 3
+difficulty: "intermediate"
+estimatedMinutes: 25
+notebookPath: "/notebooks/05-logistic-scorecard.ipynb"
+tags: ["scorecard", "PDO", "points", "scaling", "credit score"]
+---
+
+## From Model to Scorecard
+
+A logistic regression produces a predicted probability — but practitioners and relationship managers often prefer to communicate risk as a **score** between 0 and 1000. The PDO (Points to Double the Odds) method transforms log-odds into an integer score.
+
+### Scaling Equations
+
+Given a target odds at a reference score and a PDO parameter:
+
+$$
+\text{Factor} = \frac{PDO}{\ln(2)}, \quad \text{Offset} = \text{Score}_0 - \text{Factor} \cdot \ln(\text{Odds}_0)
+$$
+
+The final score:
+
+$$
+\text{Score} = \text{Offset} + \text{Factor} \cdot \ln\left(\frac{1 - PD}{PD}\right)
+$$
+
+Convention: **higher score = lower risk** (better borrowers).
+
+### Per-Feature Points
+
+For each feature $j$ with WoE-encoded value $x_j^{WoE}$:
+
+$$
+\text{Points}_j = -(\beta_j \cdot x_j^{WoE} + \beta_0 / p) \times \text{Factor}
+$$
+
+Where $p$ is the number of features. This decomposes the total score into individual feature contributions that sum exactly to the total score.
+
+<PythonDemo id="scorecard-build" />
+
+## Scorecard Scoreband Table
+
+After building the scorecard, calibrate score-to-PD mapping using observed default rates in each score band:
+
+<PythonDemo id="scoreband" />
+
+<NotebookDownload
+  notebookPath="/notebooks/05-logistic-scorecard.ipynb"
+  title="Scorecard Development — Full Notebook"
+  description="Complete scorecard build: WoE transformation, logistic regression, PDO scaling, score banding, and documentation."
+  packageList={["numpy", "pandas", "scikit-learn", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="scorecard-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "With PDO = 20 and reference score 600 at 50:1 good-to-bad odds, what score corresponds to 100:1 odds?",
+      options: ["580", "600", "620", "640"],
+      correctIndex: 2,
+      explanation: "PDO means 20 points doubles the odds. Going from 50:1 to 100:1 is doubling the odds, so the score increases by 20 to 620.",
+      difficulty: "application"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "In a scorecard, a higher score always means a higher probability of default.",
+      correctAnswer: false,
+      explanation: "By convention, credit scorecards are designed so that higher scores represent lower risk (lower PD). This is the standard industry convention — a FICO score of 800 represents a much safer borrower than a score of 400.",
+      difficulty: "recall"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "The primary advantage of expressing a credit model as a points-based scorecard (vs raw probability) is:",
+      options: [
+        "Scorecards always achieve higher Gini",
+        "Scores are easier to audit and communicate to non-technical stakeholders",
+        "Scores are more accurate at the extremes of the distribution",
+        "Scorecards require less training data"
+      ],
+      correctIndex: 1,
+      explanation: "The scorecard format is designed for operational usability. Relationship managers, credit committees, and regulators find integer scores intuitive. The underlying math is identical to logistic regression — it's purely a presentation transformation.",
+      difficulty: "analysis"
+    }
+  ]}
+/>

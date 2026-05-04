@@ -1,0 +1,108 @@
+---
+title: "Scorecard Validation and Performance Metrics"
+description: "Compute and interpret Gini/AUC, the KS statistic, PSI for stability monitoring, and calibration tests."
+module: "credit-scoring"
+order: 4
+difficulty: "intermediate"
+estimatedMinutes: 30
+notebookPath: "/notebooks/06-woe-iv.ipynb"
+tags: ["Gini", "AUC", "KS statistic", "PSI", "calibration", "model validation"]
+---
+
+## The Discrimination–Calibration Distinction
+
+Model performance has two separate dimensions:
+
+1. **Discrimination**: Does the model correctly rank borrowers from safest to riskiest?
+2. **Calibration**: Are the predicted probabilities numerically accurate?
+
+A model can discriminate well but be poorly calibrated (e.g., all PDs are 3× too high). Both dimensions must be monitored.
+
+## Gini Coefficient and AUC
+
+The **Gini coefficient** is the most widely used discrimination metric in credit risk:
+
+$$
+\text{Gini} = 2 \times AUC - 1
+$$
+
+It ranges from 0 (no discrimination) to 1 (perfect discrimination). Industry benchmarks:
+
+| Portfolio | Acceptable Gini |
+|---|---|
+| Retail consumer | > 0.40 |
+| Small business | > 0.30 |
+| Large corporate | > 0.20 |
+
+<RocCurveChart interactive />
+
+<PythonDemo id="gini-ks" />
+
+## Population Stability Index (PSI)
+
+PSI measures whether the **score distribution** has shifted between development (training) and monitoring (deployment) periods. A shifted distribution may render model performance invalid.
+
+$$
+PSI = \sum_b \left(A_b - E_b\right) \cdot \ln\left(\frac{A_b}{E_b}\right)
+$$
+
+Where $A_b$ = actual (current) distribution, $E_b$ = expected (development) distribution.
+
+| PSI | Action |
+|---|---|
+| < 0.10 | No action required |
+| 0.10 – 0.25 | Investigate and monitor |
+| > 0.25 | Model likely needs recalibration or rebuild |
+
+<PythonDemo id="psi" />
+
+<NotebookDownload
+  notebookPath="/notebooks/06-woe-iv.ipynb"
+  title="Model Performance Metrics — Full Notebook"
+  description="Gini, KS, PSI, calibration testing, and a complete model monitoring dashboard template."
+  packageList={["numpy", "pandas", "scikit-learn", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="perf-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "A retail credit model has Gini = 0.35 at development. At the six-month monitoring point it shows Gini = 0.28. What should you do?",
+      options: [
+        "Accept — all models deteriorate over time",
+        "Investigate drivers of performance decline and check PSI",
+        "Immediately rebuild the model",
+        "Switch to a random forest"
+      ],
+      correctIndex: 1,
+      explanation: "A 7-point Gini drop warrants investigation but not immediate rebuild. First, check PSI to see if the input distribution shifted. Also check if the target definition changed, if data quality degraded, or if economic conditions created an out-of-time performance issue.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q2",
+      type: "mcq",
+      prompt: "PSI = 0.28 on a scorecard deployed 12 months ago means:",
+      options: [
+        "The model's Gini has dropped by 28%",
+        "The score distribution has shifted significantly — likely requires model rebuild",
+        "28% of borrowers changed risk profile",
+        "The model overestimates default rates by 28%"
+      ],
+      correctIndex: 1,
+      explanation: "PSI measures distributional shift in model inputs or outputs. PSI > 0.25 is the industry threshold for significant shift, indicating the model was likely built on a population that no longer represents current applicants.",
+      difficulty: "recall"
+    },
+    {
+      id: "q3",
+      type: "true_false",
+      prompt: "The KS statistic identifies the score threshold at which the separation between good and bad accounts is maximized.",
+      correctAnswer: true,
+      explanation: "KS = max|cum_bad - cum_good| across all score thresholds. The score value at which KS is achieved is the optimal cut-off for maximizing true positives minus false positives.",
+      difficulty: "application"
+    }
+  ]}
+/>

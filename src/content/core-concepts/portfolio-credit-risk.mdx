@@ -1,0 +1,108 @@
+---
+title: "Portfolio Credit Risk and Correlation"
+description: "Move beyond individual loan analysis to understand concentration risk, asset correlation, and portfolio-level VaR and CVaR."
+module: "core-concepts"
+order: 4
+difficulty: "advanced"
+estimatedMinutes: 35
+notebookPath: "/notebooks/04-portfolio-risk.ipynb"
+tags: ["correlation", "Gaussian copula", "VaR", "CVaR", "HHI", "concentration"]
+---
+
+## Why Single-Loan EL Is Not Enough
+
+Knowing the expected loss on each loan is necessary but insufficient for portfolio risk management. Loans in the same sector, geography, or economic class can default together — this **correlation** transforms individual risks into systemic portfolio risk.
+
+A portfolio of 1,000 uncorrelated loans, each with PD = 1%, has a very stable aggregate loss distribution. But if those loans are all to oil & gas companies and oil prices collapse, they may default simultaneously. This correlation is the essence of **credit concentration risk**.
+
+## Asset Correlation
+
+The Basel IRB framework uses an asset correlation parameter $\rho$ that captures the degree to which firms' fortunes move together due to shared systematic risk factors.
+
+$$
+R^2 = \rho = 0.12 \cdot \frac{1 - e^{-50 \cdot PD}}{1 - e^{-50}} + 0.24 \cdot \left(1 - \frac{1 - e^{-50 \cdot PD}}{1 - e^{-50}}\right)
+$$
+
+This Basel formula shows that **low-PD borrowers have higher correlation** (they are mostly affected by systematic risk), while **high-PD borrowers are more affected by idiosyncratic factors**.
+
+## The Gaussian Copula Framework
+
+The Gaussian copula became the industry standard (and notoriously contributed to the 2008 crisis). The idea: defaults are driven by latent normal variables that are correlated across firms.
+
+Firm $i$ defaults if its asset return $R_i$ falls below a threshold $\Phi^{-1}(PD_i)$:
+
+$$
+R_i = \sqrt{\rho} \cdot Z + \sqrt{1-\rho} \cdot \epsilon_i
+$$
+
+Where $Z$ is the common market factor and $\epsilon_i$ is idiosyncratic noise.
+
+<PythonDemo id="gaussian-copula" />
+
+## Concentration Risk: Herfindahl-Hirschman Index
+
+The **HHI** measures portfolio concentration. For a portfolio of $n$ exposures with weights $w_i$:
+
+$$
+HHI = \sum_{i=1}^{n} w_i^2
+$$
+
+| HHI Range | Interpretation |
+|---|---|
+| < 0.01 | Highly diversified |
+| 0.01 – 0.10 | Moderate concentration |
+| 0.10 – 0.25 | Significant concentration |
+| > 0.25 | Highly concentrated |
+
+<PythonDemo id="hhi" />
+
+<NotebookDownload
+  notebookPath="/notebooks/04-portfolio-risk.ipynb"
+  title="Portfolio Credit Risk — Full Notebook"
+  description="Gaussian copula simulation, VaR/CVaR, sector concentration analysis, and correlation sensitivity."
+  packageList={["numpy", "pandas", "scipy", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="portfolio-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "true_false",
+      prompt: "In the Basel IRB Gaussian copula model, borrowers with higher PD have higher asset correlation.",
+      correctAnswer: false,
+      explanation: "The Basel formula shows the opposite: lower-PD borrowers (e.g., large investment-grade corporates) have higher asset correlation because their performance is dominated by systematic factors. High-PD borrowers are more idiosyncratic.",
+      difficulty: "application"
+    },
+    {
+      id: "q2",
+      type: "mcq",
+      prompt: "CVaR (Conditional Value at Risk) at 99% is defined as:",
+      options: [
+        "The loss exceeded with 1% probability",
+        "The average loss in the worst 1% of scenarios",
+        "The maximum possible loss",
+        "The expected loss multiplied by 99"
+      ],
+      correctIndex: 1,
+      explanation: "CVaR (also called Expected Shortfall) is the average loss conditional on exceeding the VaR threshold. It captures the tail severity beyond VaR and is a coherent risk measure, unlike VaR.",
+      difficulty: "recall"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "A bank has a portfolio HHI of 0.18. This implies:",
+      options: [
+        "The portfolio is highly diversified",
+        "There is significant concentration risk",
+        "All exposures are equal",
+        "The portfolio contains exactly 18 borrowers"
+      ],
+      correctIndex: 1,
+      explanation: "HHI of 0.18 falls in the 'significant concentration' range (0.10–0.25). The effective number of independent exposures is only 1/0.18 ≈ 5.6, meaning the portfolio behaves like 5–6 equal-sized loans despite potentially having many more.",
+      difficulty: "analysis"
+    }
+  ]}
+/>

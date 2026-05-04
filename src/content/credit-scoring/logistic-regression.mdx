@@ -1,0 +1,102 @@
+---
+title: "Logistic Regression for PD Modelling"
+description: "Build a PD model using logistic regression — from the logit link function to coefficient interpretation as log-odds."
+module: "credit-scoring"
+order: 1
+difficulty: "foundational"
+estimatedMinutes: 30
+notebookPath: "/notebooks/05-logistic-scorecard.ipynb"
+tags: ["logistic regression", "PD", "log-odds", "scorecard", "credit scoring"]
+---
+
+## Why Logistic Regression?
+
+For decades, logistic regression has been the dominant approach to retail credit scoring. It offers:
+
+- **Interpretable coefficients**: Each variable's contribution is a log-odds ratio
+- **Regulatory acceptance**: SR 11-7 / SS1/23 and EBA guidelines explicitly support it
+- **Calibrated probabilities**: The model output is a valid PD estimate
+- **Stability**: Less prone to overfitting than complex ML models on small samples
+
+Despite the rise of gradient boosting models, logistic regression remains the backbone of most production scorecards at regulated institutions.
+
+## The Logistic Model
+
+We model the log-odds of default as a linear function of features:
+
+$$
+\log\left(\frac{PD}{1 - PD}\right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_p x_p
+$$
+
+Solving for PD:
+
+$$
+PD = \frac{1}{1 + e^{-(\beta_0 + \boldsymbol{\beta}^\top \mathbf{x})}}
+$$
+
+### Interpreting Coefficients
+
+A coefficient $\beta_j$ represents the change in **log-odds** for a one-unit increase in $x_j$, holding all else constant. The **odds ratio** is $e^{\beta_j}$:
+
+- $\beta_j > 0$: feature increases default probability (riskier)
+- $\beta_j < 0$: feature decreases default probability (safer)
+- $e^{\beta_j}$: multiplicative factor on the odds of default
+
+<PythonDemo id="logistic-fit" />
+
+## Model Calibration
+
+A well-calibrated model produces predicted PDs that match observed default rates. Plot predicted probability buckets against actual default rates:
+
+<PythonDemo id="calibration" />
+
+<NotebookDownload
+  notebookPath="/notebooks/05-logistic-scorecard.ipynb"
+  title="Logistic Regression Scorecard — Full Notebook"
+  description="Full scorecard development pipeline: WoE encoding, logistic regression, coefficient scaling, and validation."
+  packageList={["numpy", "pandas", "scikit-learn", "matplotlib", "statsmodels"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="lr-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "In a logistic regression PD model, a coefficient of +0.8 on 'prior_defaults' means:",
+      options: [
+        "Having one prior default increases the log-odds of default by 0.8",
+        "Having one prior default increases the probability of default by 80%",
+        "The odds of default multiply by 0.8 for each prior default",
+        "Prior defaults have an 80% weight in the model"
+      ],
+      correctIndex: 0,
+      explanation: "Logistic regression coefficients are additive on the log-odds scale. β = +0.8 means one additional prior default adds 0.8 to the log-odds. The odds ratio is e^0.8 ≈ 2.23, meaning the odds of default roughly double.",
+      difficulty: "application"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "A logistic regression PD model with high AUC is guaranteed to be well-calibrated.",
+      correctAnswer: false,
+      explanation: "AUC measures discrimination (rank ordering), not calibration. A model with high AUC can still produce systematically biased PD estimates. Calibration must be tested separately using tools like calibration plots or the Hosmer-Lemeshow test.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "Which is the primary reason logistic regression remains popular for regulatory credit scorecards despite ML alternatives?",
+      options: [
+        "It always achieves higher Gini than XGBoost",
+        "Regulatory acceptance and coefficient interpretability",
+        "It handles missing data better than tree models",
+        "It requires less training data"
+      ],
+      correctIndex: 1,
+      explanation: "Interpretability and regulatory acceptance are the main reasons. Regulators (ECB, PRA, Fed) require model documentation and explainability standards that logistic regression naturally satisfies through its coefficient structure.",
+      difficulty: "recall"
+    }
+  ]}
+/>

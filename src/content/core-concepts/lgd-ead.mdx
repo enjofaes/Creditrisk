@@ -1,0 +1,108 @@
+---
+title: "LGD and EAD: Recovery and Exposure"
+description: "Understand workout vs market LGD, credit conversion factors for revolving facilities, and the distributional properties of both risk drivers."
+module: "core-concepts"
+order: 3
+difficulty: "intermediate"
+estimatedMinutes: 25
+notebookPath: "/notebooks/03-lgd-ead.ipynb"
+tags: ["LGD", "EAD", "recovery", "CCF", "revolving credit"]
+---
+
+## Loss Given Default (LGD)
+
+LGD measures the economic loss as a fraction of EAD, conditional on default having occurred:
+
+$$
+LGD = 1 - \frac{\text{Recovered Amount (NPV)}}{EAD}
+$$
+
+The recovered amount must be discounted back to the default date — recovery processes take time (months to years for corporate workouts), and the time value of money matters.
+
+### Workout LGD vs Market LGD
+
+**Workout LGD** (also called *ultimate LGD*): Follow the loan through the entire recovery process — collateral liquidation, legal costs, administrative expenses — and calculate the actual loss once the workout concludes. This is the Basel regulatory standard.
+
+**Market LGD**: Use the market price of defaulted debt (distressed debt trading prices) shortly after default as a proxy for recovery value. Faster to compute, but sensitive to market liquidity conditions.
+
+<Callout type="tip" title="LGD Modelling Approaches">
+For regulatory capital, supervisors generally prefer workout LGD because it reflects actual economic outcomes. For IFRS 9, practitioners often blend market and workout approaches, particularly for traded corporate debt.
+</Callout>
+
+### Key Drivers of LGD
+
+| Factor | Effect on LGD |
+|---|---|
+| Collateral quality | Higher quality → lower LGD |
+| Seniority in capital structure | Senior secured → lower LGD |
+| Macroeconomic cycle | Downturn → higher LGD (correlated with PD) |
+| Industry sector | Real estate → lower; unsecured consumer → higher |
+| Loan-to-value ratio | Higher LTV → higher LGD for secured loans |
+
+### LGD Distributions
+
+LGD is notoriously bimodal: many defaults result in near-full recovery (LGD ≈ 0) while others result in near-complete loss (LGD ≈ 1). This makes standard regression approaches poorly calibrated — beta regression or mixture models are preferable.
+
+<PythonDemo id="lgd-dist" />
+
+## Exposure at Default (EAD)
+
+EAD is the outstanding balance at the moment of default. For **drawn term loans**, this is simply the outstanding principal. For **revolving credit facilities**, borrowers often draw down available limits as financial distress approaches — a phenomenon called "panic drawdowns."
+
+### Credit Conversion Factor (CCF)
+
+For undrawn commitments, EAD is estimated using the CCF:
+
+$$
+EAD = \text{Drawn Balance} + CCF \times \text{Undrawn Commitment}
+$$
+
+A CCF of 75% means that, on average, borrowers draw down 75% of their unused commitment before defaulting. Basel F-IRB prescribes regulatory CCFs; A-IRB banks estimate their own.
+
+<PythonDemo id="ead-ccf" />
+
+<NotebookDownload
+  notebookPath="/notebooks/03-lgd-ead.ipynb"
+  title="LGD and EAD — Full Notebook"
+  description="Beta regression for LGD, CCF estimation, downturn adjustments, and regulatory floor analysis."
+  packageList={["numpy", "pandas", "scipy", "matplotlib", "statsmodels"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="lgd-ead-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "Which statement about LGD distributions in unsecured retail portfolios is most accurate?",
+      options: [
+        "LGD follows a normal distribution centred around 50%",
+        "LGD is bimodal, with clusters near 0% and 100%",
+        "LGD is uniform between 0% and 100%",
+        "LGD follows an exponential distribution"
+      ],
+      correctIndex: 1,
+      explanation: "Retail LGD is typically bimodal: many accounts either recover fully (collateral or voluntary repayment) or result in near-total loss. Standard regression methods assume a single distribution mode and are often poorly calibrated for LGD.",
+      difficulty: "recall"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "A Credit Conversion Factor (CCF) of 100% means a revolving borrower always draws their full undrawn commitment before defaulting.",
+      correctAnswer: true,
+      explanation: "A CCF of 100% implies that the full undrawn commitment is expected to be drawn at the point of default. EAD = Drawn + 1.0 × Undrawn = the full credit limit.",
+      difficulty: "application"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "Basel F-IRB vs A-IRB: which approach allows banks to use their own LGD estimates?",
+      options: ["F-IRB (Foundation IRB)", "A-IRB (Advanced IRB)", "Both", "Neither"],
+      correctIndex: 1,
+      explanation: "Under F-IRB, supervisors prescribe LGD values (e.g., 45% for senior unsecured). Under A-IRB, banks with sufficient historical data and supervisory approval can use their own LGD estimates.",
+      difficulty: "recall"
+    }
+  ]}
+/>

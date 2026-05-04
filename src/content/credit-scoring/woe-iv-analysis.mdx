@@ -1,0 +1,110 @@
+---
+title: "Weight of Evidence and Information Value"
+description: "Master WoE encoding, IV threshold rules, and interactive visualizations for feature selection in credit scorecards."
+module: "credit-scoring"
+order: 2
+difficulty: "intermediate"
+estimatedMinutes: 30
+notebookPath: "/notebooks/06-woe-iv.ipynb"
+tags: ["WoE", "IV", "information value", "binning", "feature selection"]
+---
+
+## Weight of Evidence
+
+Weight of Evidence (WoE) is a monotonic encoding of categorical or binned continuous features. For each bin $b$:
+
+$$
+WoE_b = \ln\left(\frac{\text{Distribution of Events}}{\text{Distribution of Non-Events}}\right) = \ln\left(\frac{p_b^{\text{bad}}}{p_b^{\text{good}}}\right)
+$$
+
+Where:
+- $p_b^{\text{bad}}$ = fraction of all defaults in bin $b$
+- $p_b^{\text{good}}$ = fraction of all non-defaults in bin $b$
+
+**Interpretation:**
+- WoE > 0: bin has higher proportion of defaults than average → **risky** bin
+- WoE < 0: bin has lower proportion of defaults than average → **safe** bin
+- WoE = 0: bin has same default rate as portfolio average
+
+## Information Value
+
+IV summarizes the **total predictive power** of a feature across all its bins:
+
+$$
+IV = \sum_{b} (p_b^{\text{bad}} - p_b^{\text{good}}) \times WoE_b
+$$
+
+### IV Interpretation Rules
+
+| IV Range | Predictive Power |
+|---|---|
+| < 0.02 | Useless — exclude from model |
+| 0.02 – 0.10 | Weak predictor |
+| 0.10 – 0.30 | Medium predictor |
+| 0.30 – 0.50 | Strong predictor |
+| > 0.50 | Very strong — check for data leakage |
+
+<Callout type="warning" title="IV > 0.5 Warning">
+An IV exceeding 0.5 almost always indicates data leakage — the feature is unknowingly capturing the target variable. Classic example: including a post-default flag in a pre-default model.
+</Callout>
+
+## Interactive WoE Chart
+
+The chart below shows WoE values for a credit score feature:
+
+<WoeChart feature="Credit Score Band" />
+
+## Computing WoE in Python
+
+<PythonDemo id="woe-compute" />
+
+<NotebookDownload
+  notebookPath="/notebooks/06-woe-iv.ipynb"
+  title="WoE and IV Analysis — Full Notebook"
+  description="Optimal binning, WoE encoding pipeline, IV-based feature selection, and monotonicity constraints."
+  packageList={["numpy", "pandas", "matplotlib", "scikit-learn"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="woe-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "A credit score bin with WoE = +1.2 means:",
+      options: [
+        "The bin has 1.2x higher default rate than the portfolio",
+        "Defaults are over-represented relative to non-defaults in this bin",
+        "The bin contains 1.2% of all defaults",
+        "The bin's default rate is 1.2% above the portfolio average"
+      ],
+      correctIndex: 1,
+      explanation: "A positive WoE means the proportion of defaults in the bin exceeds the proportion of non-defaults. WoE = ln(pct_bad / pct_good), so WoE > 0 means pct_bad > pct_good — this bin is over-represented among defaulters.",
+      difficulty: "application"
+    },
+    {
+      id: "q2",
+      type: "mcq",
+      prompt: "A feature has IV = 0.65. The most likely explanation is:",
+      options: [
+        "The feature is extremely predictive",
+        "The feature contains data leakage",
+        "The feature needs finer binning",
+        "The dataset has too few defaults"
+      ],
+      correctIndex: 1,
+      explanation: "IV > 0.5 almost always signals data leakage. True credit risk features rarely achieve this level without inadvertently including post-default information (e.g., a delinquency flag measured after the default event).",
+      difficulty: "analysis"
+    },
+    {
+      id: "q3",
+      type: "true_false",
+      prompt: "WoE encoding can be used to handle missing values by treating them as a separate bin.",
+      correctAnswer: true,
+      explanation: "One of WoE's practical advantages is that missing values can be treated as their own bin with its own WoE value. This allows the model to learn whether missingness itself is predictive of default, rather than imputing or discarding missing observations.",
+      difficulty: "application"
+    }
+  ]}
+/>

@@ -1,0 +1,108 @@
+---
+title: "SHAP for Model Interpretability"
+description: "Use TreeExplainer to decompose XGBoost predictions into feature contributions — satisfying regulatory right-to-explanation requirements."
+module: "ml-models"
+order: 3
+difficulty: "intermediate"
+estimatedMinutes: 30
+notebookPath: "/notebooks/09-shap-explainability.ipynb"
+tags: ["SHAP", "explainability", "TreeExplainer", "feature importance", "XAI"]
+---
+
+## The Explainability Problem
+
+Regulators (ECB, FRB, PRA) require that credit decisions can be explained to applicants and auditors. SR 11-7 states models must be conceptually sound and outcomes interpretable. The EU AI Act adds to these requirements.
+
+SHAP (SHapley Additive exPlanations) provides a mathematically grounded way to attribute a model prediction to individual features.
+
+## Shapley Values: The Math
+
+SHAP values are based on Shapley values from cooperative game theory. The SHAP value for feature $j$ is:
+
+$$
+\phi_j = \sum_{S \subseteq F \setminus \{j\}} \frac{|S|!(|F|-|S|-1)!}{|F|!} \left[f(S \cup \{j\}) - f(S)\right]
+$$
+
+In plain terms: the SHAP value is the **average marginal contribution** of feature $j$ across all possible orderings in which features enter the prediction.
+
+**Key property**: SHAP values are **additive** — they sum exactly to the difference between the model output and the expected output:
+
+$$
+f(x) = E[f(x)] + \sum_j \phi_j
+$$
+
+## Interactive SHAP Waterfall
+
+The chart below shows a sample loan's SHAP decomposition:
+
+<ShapWaterfallChart />
+
+## Computing SHAP with TreeExplainer
+
+<PythonDemo id="shap-demo" />
+
+## Global vs Local Explanations
+
+SHAP supports both **global** and **local** interpretability:
+
+| Type | Method | Use Case |
+|---|---|---|
+| Global | Mean absolute SHAP values | Feature selection, model documentation |
+| Global | SHAP beeswarm plot | Distribution of feature impacts across portfolio |
+| Local | SHAP waterfall/force plot | Individual loan decision explanation |
+| Local | Dependency plots | Feature interaction analysis |
+
+<Callout type="tip" title="For Regulatory Submissions">
+Document both global feature importance (SHAP means) in your model documentation, and implement a system to generate individual SHAP explanations for credit decisions. The ECB Guide to Internal Models and DORA requirements increasingly expect this.
+</Callout>
+
+<NotebookDownload
+  notebookPath="/notebooks/09-shap-explainability.ipynb"
+  title="SHAP Explainability — Full Notebook"
+  description="TreeExplainer, waterfall plots, beeswarm plots, SHAP dependence plots, and a regulatory explanation template."
+  packageList={["xgboost", "shap", "pandas", "numpy", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="shap-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "A borrower's XGBoost PD = 18.5%, and the portfolio base PD = 4%. The SHAP values for the borrower sum to:",
+      options: [
+        "18.5%",
+        "14.5% (the excess above base)",
+        "The log-odds difference",
+        "1.0 (by normalisation)"
+      ],
+      correctIndex: 2,
+      explanation: "SHAP values are additive in the model's output space. For log-odds output (XGBoost default), SHAP values sum to (log_odds_prediction - log_odds_base). The raw probabilities don't simply subtract — the additivity holds in the logit space.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "TreeExplainer computes exact SHAP values for tree-based models without approximation.",
+      correctAnswer: true,
+      explanation: "TreeExplainer exploits the tree structure to compute exact Shapley values in polynomial time (O(TLD²) where T=trees, L=leaves, D=depth). This is in contrast to KernelExplainer which uses sampling approximations.",
+      difficulty: "recall"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "A SHAP beeswarm plot shows a feature with many high-value points (red) at positive SHAP values. This means:",
+      options: [
+        "High feature values increase predicted default probability",
+        "Low feature values are more predictive",
+        "The feature has high global importance",
+        "The feature should be removed"
+      ],
+      correctIndex: 0,
+      explanation: "In a SHAP beeswarm plot, point color represents feature value (red=high, blue=low) and x-position represents SHAP value. High feature values at positive SHAP = high values of this feature push predictions toward default.",
+      difficulty: "application"
+    }
+  ]}
+/>

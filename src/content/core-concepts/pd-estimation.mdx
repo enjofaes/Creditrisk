@@ -1,0 +1,111 @@
+---
+title: "Probability of Default: Estimation Methods"
+description: "Explore through-the-cycle vs point-in-time PD, the KMV structural model, and cohort-based empirical estimation."
+module: "core-concepts"
+order: 2
+difficulty: "foundational"
+estimatedMinutes: 30
+notebookPath: "/notebooks/02-pd-estimation.ipynb"
+tags: ["PD", "TTC", "PIT", "KMV", "Merton", "cohort analysis"]
+---
+
+## Two Philosophies: TTC vs PIT
+
+One of the most important decisions in PD estimation is the **time horizon** and **economic conditioning** of the estimate. Two frameworks dominate:
+
+### Through-the-Cycle (TTC)
+
+TTC PDs are designed to be **stable across the economic cycle**. They represent the average default rate over a full credit cycle, abstracting away short-term fluctuations in economic conditions.
+
+- Used by Basel IRB models for **capital adequacy** — regulators want capital to be stable, not pro-cyclically released in booms and rebuilt in busts
+- Long estimation windows (7–10+ years including at least one downturn)
+- Slower to update when macroeconomic conditions change
+
+### Point-in-Time (PIT)
+
+PIT PDs reflect the **current state of the economy** and the borrower's current financial condition.
+
+- Used for **IFRS 9 provisioning**, pricing, and limit management
+- More sensitive to economic downturns — provisions surge during recessions
+- Requires macroeconomic conditioning (linkage to GDP, unemployment, etc.)
+
+<Callout type="warning" title="Regulatory Distinction">
+Using a TTC PD in your IFRS 9 model is a common modelling error. IFRS 9 requires forward-looking, PIT estimates. Using TTC PDs will systematically under-provision in downturns and over-provision in benign conditions.
+</Callout>
+
+## The Merton / KMV Structural Model
+
+The structural approach to PD treats equity as a **call option on the firm's assets**. The firm defaults when its asset value falls below its debt obligations at maturity.
+
+### Key Relationships
+
+Let $V_A$ = asset value, $\sigma_A$ = asset volatility, $D$ = face value of debt, $T$ = time horizon, $r$ = risk-free rate.
+
+The equity value is:
+
+$$
+V_E = V_A \cdot N(d_1) - D e^{-rT} \cdot N(d_2)
+$$
+
+Where:
+
+$$
+d_1 = \frac{\ln(V_A/D) + (r + \sigma_A^2/2)T}{\sigma_A \sqrt{T}}, \quad d_2 = d_1 - \sigma_A\sqrt{T}
+$$
+
+The **risk-neutral PD** is $N(-d_2)$.
+
+The **Distance to Default (DD)** — Moody's KMV's key metric — measures how many standard deviations the asset value is from the default point:
+
+$$
+DD = \frac{V_A - D}{V_A \cdot \sigma_A}
+$$
+
+<PythonDemo id="merton-dd" />
+
+## Cohort Analysis: Empirical PD Estimation
+
+For retail portfolios, empirical cohort analysis is the workhorse. You track a cohort of borrowers over time and observe actual default rates.
+
+<PythonDemo id="cohort-pd" />
+
+<NotebookDownload
+  notebookPath="/notebooks/02-pd-estimation.ipynb"
+  title="PD Estimation — Full Notebook"
+  description="Merton model, KMV calibration, cohort analysis, and TTC vs PIT transformation with macroeconomic overlay."
+  packageList={["numpy", "pandas", "scipy", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="pd-estimation-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "Which PD concept should be used for IFRS 9 expected credit loss provisioning?",
+      options: ["Through-the-cycle (TTC) PD", "Point-in-time (PIT) PD", "Long-run average default rate", "Regulatory downturn PD"],
+      correctIndex: 1,
+      explanation: "IFRS 9 requires forward-looking, PIT PDs that reflect current economic conditions. TTC PDs are appropriate for regulatory capital (Basel IRB) because regulators want stable capital buffers across the cycle.",
+      difficulty: "recall"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "In the Merton/KMV framework, a higher Distance to Default implies a lower probability of default.",
+      correctAnswer: true,
+      explanation: "Distance to Default measures how many standard deviations the asset value is above the default point. A larger DD means the firm is further from default, so PD (which equals N(-DD)) is lower.",
+      difficulty: "application"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "A bank wants capital requirements that are stable through the economic cycle. Which PD type should it use in its IRB model?",
+      options: ["Point-in-time PD", "Through-the-cycle PD", "Current market-implied PD", "1-year CDS spread-implied PD"],
+      correctIndex: 1,
+      explanation: "Basel IRB rules require TTC PDs for capital calculation to prevent pro-cyclicality. If capital could fall in booms and rise in recessions, it would amplify the credit cycle.",
+      difficulty: "analysis"
+    }
+  ]}
+/>

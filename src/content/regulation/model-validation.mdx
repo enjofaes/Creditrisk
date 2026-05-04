@@ -1,0 +1,102 @@
+---
+title: "Independent Model Validation"
+description: "Apply SR 11-7 and SS1/23 validation standards: conceptual soundness, outcome testing, back-testing, and ongoing monitoring."
+module: "regulation"
+order: 4
+difficulty: "advanced"
+estimatedMinutes: 35
+notebookPath: "/notebooks/11-ifrs9-staging.ipynb"
+tags: ["model validation", "SR 11-7", "SS1/23", "back-testing", "ongoing monitoring"]
+---
+
+## The Validation Framework
+
+Model validation is a three-part process required by regulators in every major jurisdiction:
+
+1. **Conceptual soundness** — Is the methodology theoretically appropriate?
+2. **Ongoing monitoring** — Does the model perform as expected in production?
+3. **Outcomes analysis** — Do model predictions match actual outcomes?
+
+The US Federal Reserve's **SR 11-7** (Guidance on Model Risk Management) and the UK PRA's **SS1/23** (Model Risk Management) are the two most influential frameworks.
+
+## Conceptual Soundness Review
+
+Conceptual soundness assesses the model's theoretical foundation, data, and implementation:
+
+| Area | What Validators Check |
+|---|---|
+| Methodology | Is the statistical approach appropriate for the risk type? |
+| Data | Is training data representative? Sufficient defaults? |
+| Implementation | Does code match documented methodology? |
+| Assumptions | Are key assumptions documented and stress-tested? |
+| Limitations | Are limitations documented and mitigated? |
+
+<Callout type="important" title="Common Conceptual Soundness Findings">
+1. Target variable definition inconsistent with regulatory definition of default
+2. Development data from a benign economic period — no stress coverage
+3. Survivorship bias: only accounts that were originated are in the development sample
+4. Data leakage: post-default information inadvertently included in features
+</Callout>
+
+## Outcome Testing: Back-Testing
+
+Back-testing compares **predicted PDs** to **observed default rates** over a relevant time window:
+
+<PythonDemo id="backtest" />
+
+## Population Stability and Performance Monitoring
+
+An independent model validation function runs monthly monitoring reports:
+
+<PythonDemo id="monitoring" />
+
+<NotebookDownload
+  notebookPath="/notebooks/11-ifrs9-staging.ipynb"
+  title="Model Validation Framework — Full Notebook"
+  description="SR 11-7 validation checklist, back-testing suite, Gini/PSI monitoring dashboard, and escalation framework."
+  packageList={["numpy", "pandas", "scipy", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="validation-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "The traffic light back-test for a PD model shows p-value = 0.02 (more defaults than predicted). The validator should:",
+      options: [
+        "Accept — 2% is within normal model error",
+        "Flag as amber — investigate whether model is systematically underestimating PD",
+        "Immediately decommission the model",
+        "Recalibrate by multiplying all PDs by 1.02"
+      ],
+      correctIndex: 1,
+      explanation: "A p-value of 0.02 means the observed default count is in the 2% tail of what the model predicted — significant evidence of model underestimation. The validator should flag this, investigate root causes (PIT/TTC mismatch? Population shift? Economic deterioration?), and recommend recalibration if systematic bias is confirmed.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "SR 11-7 requires that model validation be performed by the same team that developed the model.",
+      correctAnswer: false,
+      explanation: "SR 11-7 explicitly requires that validation be performed by staff independent of the model development team. Independence ensures objectivity. The validation function should have its own reporting line, separate from model development.",
+      difficulty: "recall"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "Which of the following is an example of 'outcomes analysis' in model validation?",
+      options: [
+        "Checking that the model code matches the methodology document",
+        "Comparing predicted default rates to actual default rates over a one-year window",
+        "Reviewing the model's assumption about LGD distributions",
+        "Ensuring the model is only used for its intended purpose"
+      ],
+      correctIndex: 1,
+      explanation: "Outcomes analysis (back-testing) compares model predictions to actual realised outcomes. This is distinct from conceptual soundness (checking assumptions and methodology) and use review (checking appropriate application). Comparing predicted vs actual default rates is the most direct form of outcomes analysis.",
+      difficulty: "recall"
+    }
+  ]}
+/>

@@ -1,0 +1,142 @@
+---
+title: "Expected Loss: The Foundational Formula"
+description: "Derive EL = PD × LGD × EAD from first principles and explore how each component drives capital requirements."
+module: "core-concepts"
+order: 1
+difficulty: "foundational"
+estimatedMinutes: 20
+notebookPath: "/notebooks/01-expected-loss.ipynb"
+tags: ["EL", "PD", "LGD", "EAD", "expected loss"]
+---
+
+## What Is Credit Risk?
+
+Credit risk is the possibility that a borrower fails to meet their contractual obligations — in other words, the chance that you won't get your money back. For a bank, managing this risk is existential: poorly measured credit losses have caused more bank failures than any other single factor.
+
+The industry's foundational answer to *quantifying* this risk is a deceptively simple equation:
+
+$$
+EL = PD \times LGD \times EAD
+$$
+
+This is the **Expected Loss** (EL) formula, and it is the starting point for everything else in this course.
+
+## Breaking Down the Components
+
+<Callout type="info" title="The Three Risk Drivers">
+Each component captures a different dimension of credit risk. A robust credit risk function measures all three independently and with appropriate granularity.
+</Callout>
+
+### Probability of Default (PD)
+
+PD is the likelihood that a borrower defaults within a given time horizon — almost always **one year** in retail and corporate banking. It is expressed as a probability between 0 and 1 (or equivalently as a percentage).
+
+- A prime mortgage borrower might have a PD of 0.3%
+- A subprime auto loan borrower might carry a PD of 8%
+- A distressed corporate credit might have PD > 20%
+
+### Loss Given Default (LGD)
+
+If the borrower does default, what fraction of the outstanding exposure will the lender ultimately lose? LGD captures recovery: collateral realisations, legal costs, and the time value of money during workout proceedings.
+
+$$
+LGD = 1 - \text{Recovery Rate}
+$$
+
+An unsecured personal loan typically has LGD near 90%. A first-lien mortgage against prime real estate might have LGD of 20–30%.
+
+### Exposure at Default (EAD)
+
+EAD is the total outstanding amount at risk **at the moment of default**. For term loans, this is approximately the outstanding balance. For revolving facilities (credit cards, revolving credit lines), EAD can exceed the current drawn balance if the borrower draws down further before defaulting.
+
+## The Interactive EL Calculator
+
+Use the sliders below to see how changes in PD and LGD translate into Expected Loss on a $1,000,000 exposure:
+
+<ExpectedLossChart interactive initialPd={0.05} initialLgd={0.45} ead={1000000} />
+
+## A Numerical Example
+
+Consider a commercial real estate loan:
+
+| Component | Value |
+|---|---|
+| EAD | $5,000,000 |
+| PD (1-year) | 3.5% |
+| LGD | 40% |
+| **Expected Loss** | **$70,000** |
+
+$$
+EL = 0.035 \times 0.40 \times \$5{,}000{,}000 = \$70{,}000
+$$
+
+This $70,000 represents the **average annual loss** the bank should provision for on this loan. It is not a worst-case scenario — that is captured by Unexpected Loss (UL) and economic capital, which we cover in the portfolio chapter.
+
+## From Expected Loss to Pricing
+
+Banks use EL directly in loan pricing. The minimum spread required to break even on a credit:
+
+$$
+\text{Minimum Spread} \geq \frac{EL}{EAD} = PD \times LGD
+$$
+
+A loan with PD = 5% and LGD = 45% needs at minimum 225 basis points (2.25%) above the funding cost just to cover expected losses. Any spread below this results in systematic economic losses.
+
+## Try It in Python
+
+<PythonDemo id="el-basic" />
+
+<NotebookDownload
+  notebookPath="/notebooks/01-expected-loss.ipynb"
+  title="Expected Loss — Full Notebook"
+  description="Extended analysis including portfolio aggregation, correlation effects, and capital calculation."
+  packageList={["numpy", "pandas", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="el-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "A loan has PD = 2%, LGD = 50%, and EAD = $200,000. What is the Expected Loss?",
+      options: ["$200", "$2,000", "$4,000", "$20,000"],
+      correctIndex: 1,
+      explanation: "EL = 0.02 × 0.50 × $200,000 = $2,000. Always multiply all three components.",
+      difficulty: "recall"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "A credit card's EAD at default is guaranteed to equal its current drawn balance.",
+      correctAnswer: false,
+      explanation: "For revolving facilities, borrowers often draw down further ahead of default. EAD is typically estimated using a Credit Conversion Factor (CCF) applied to the undrawn commitment.",
+      difficulty: "application"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "Which component of the EL formula represents what is recovered after a borrower defaults?",
+      options: ["PD", "1 − LGD", "EAD", "UL"],
+      correctIndex: 1,
+      explanation: "LGD is the loss fraction; (1 − LGD) is the recovery rate. If LGD = 45%, then 55% of the exposure is expected to be recovered.",
+      difficulty: "recall"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A bank prices a loan at SOFR + 150bps. If PD = 4% and LGD = 50%, is the bank covering its expected losses?",
+      options: [
+        "Yes — 150bps exceeds the 200bps required EL spread",
+        "No — EL requires at minimum 200bps spread",
+        "Yes — the minimum spread is 50bps",
+        "Cannot be determined without EAD"
+      ],
+      correctIndex: 1,
+      explanation: "Minimum spread = PD × LGD = 4% × 50% = 2.0% = 200bps. At 150bps, the bank is not covering expected losses and is destroying economic value.",
+      difficulty: "analysis"
+    }
+  ]}
+/>

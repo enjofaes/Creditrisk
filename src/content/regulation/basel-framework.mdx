@@ -1,0 +1,111 @@
+---
+title: "Basel II/III Capital Requirements"
+description: "Navigate the three pillars of Basel, standardised vs IRB approaches, and the IRB risk-weight formula with an interactive capital calculator."
+module: "regulation"
+order: 1
+difficulty: "intermediate"
+estimatedMinutes: 35
+notebookPath: "/notebooks/10-basel-irb.ipynb"
+tags: ["Basel", "IRB", "capital", "risk weight", "regulatory capital", "pillar 1"]
+---
+
+## The Three Pillars
+
+Basel II/III structures bank regulation around three mutually reinforcing pillars:
+
+| Pillar | Purpose | Key Requirements |
+|---|---|---|
+| **Pillar 1** | Minimum capital requirements | Credit, market, operational risk |
+| **Pillar 2** | Supervisory review | ICAAP, stress testing, model governance |
+| **Pillar 3** | Market discipline | Public disclosure of risk exposures |
+
+This chapter focuses on **Pillar 1 credit risk capital** — the amount of regulatory capital a bank must hold against its credit exposures.
+
+## Capital Approaches
+
+Basel offers a hierarchy of approaches:
+
+1. **Standardised Approach (SA)**: External credit ratings (or Basel prescribed risk weights) determine capital charges. Simple, but coarse.
+2. **Foundation IRB (F-IRB)**: Banks estimate PD; supervisors prescribe LGD and EAD.
+3. **Advanced IRB (A-IRB)**: Banks estimate PD, LGD, and EAD, subject to minimum data requirements.
+
+<Callout type="info" title="Basel III Finalisation (CRR3/Basel IV)">
+Basel III finalisation (fully effective January 2025 in the EU via CRR3) introduced an output floor: IRB capital charges cannot fall below 72.5% of the standardised approach. This limits the capital benefit of sophisticated IRB models relative to the simple SA.
+</Callout>
+
+## The IRB Risk-Weight Formula
+
+For corporate/retail exposures under IRB, the risk weight $RW$ is:
+
+$$
+K = LGD \cdot N\left(\frac{N^{-1}(PD)}{\sqrt{1-R}} + \sqrt{\frac{R}{1-R}} \cdot N^{-1}(0.999)\right) - LGD \cdot PD
+$$
+
+$$
+RW = K \times MA \times 12.5
+$$
+
+Where:
+- $R$ is the asset correlation (Basel-prescribed for different asset classes)
+- $MA$ is the maturity adjustment
+- $N^{-1}(\cdot)$ is the inverse normal CDF
+- The 0.999 quantile corresponds to a **99.9% confidence level** (1-in-1000 year stress)
+
+## Interactive Capital Calculator
+
+<BaselCapitalChart />
+
+## Capital Requirement for a Single Loan
+
+<PythonDemo id="irb-capital" />
+
+<NotebookDownload
+  notebookPath="/notebooks/10-basel-irb.ipynb"
+  title="Basel IRB Framework — Full Notebook"
+  description="IRB formula, asset correlation, maturity adjustment, output floor, and capital optimisation analysis."
+  packageList={["numpy", "scipy", "pandas", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="basel-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "The Basel IRB formula uses the 99.9th percentile of the systematic factor. This means capital is sized to:",
+      options: [
+        "Cover 99.9% of all individual loan defaults",
+        "Remain solvent in a 1-in-1000 year systematic stress scenario",
+        "Exceed expected losses by a factor of 999",
+        "Meet the minimum capital ratio 99.9% of the time"
+      ],
+      correctIndex: 1,
+      explanation: "The 99.9% confidence level means Basel capital is designed to cover credit losses in all but the most extreme 0.1% of scenarios — roughly a once-in-1000-year systematic stress event. Individual defaults are much more frequent but are pooled across the portfolio.",
+      difficulty: "application"
+    },
+    {
+      id: "q2",
+      type: "mcq",
+      prompt: "The Basel III output floor means a bank's IRB capital cannot be less than:",
+      options: [
+        "72.5% of the standardised approach capital",
+        "72.5% of the previous year's capital",
+        "72.5% of Tier 1 capital",
+        "7.25% of risk-weighted assets"
+      ],
+      correctIndex: 0,
+      explanation: "The output floor (Basel III finalisation) requires that total IRB capital charges be at least 72.5% of what the standardised approach would require. This prevents banks from using sophisticated internal models to reduce capital below a regulatory floor.",
+      difficulty: "recall"
+    },
+    {
+      id: "q3",
+      type: "true_false",
+      prompt: "Under the Basel IRB formula, a lower asset correlation (R) leads to lower capital requirements.",
+      correctAnswer: true,
+      explanation: "Lower correlation means losses are more independent across borrowers, so the portfolio loss distribution has a narrower tail. At the 99.9th percentile, a portfolio with lower correlation has a smaller gap between expected and unexpected loss, requiring less capital.",
+      difficulty: "analysis"
+    }
+  ]}
+/>

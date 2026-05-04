@@ -1,0 +1,125 @@
+---
+title: "IRB Implementation: Foundation vs Advanced"
+description: "Understand F-IRB vs A-IRB distinctions, minimum data history requirements, margin of conservatism, and specialised lending."
+module: "regulation"
+order: 2
+difficulty: "advanced"
+estimatedMinutes: 30
+notebookPath: "/notebooks/10-basel-irb.ipynb"
+tags: ["IRB", "F-IRB", "A-IRB", "MoC", "data requirements", "specialised lending"]
+---
+
+## F-IRB vs A-IRB: Key Differences
+
+| Dimension | F-IRB (Foundation) | A-IRB (Advanced) |
+|---|---|---|
+| PD | Bank estimates | Bank estimates |
+| LGD | Supervisor prescribes | Bank estimates |
+| EAD | Supervisor prescribes | Bank estimates |
+| Maturity | Fixed at 2.5 yrs | Bank estimates |
+| Data history | 5 years minimum (PD) | 7 years (PD), 7 years (LGD/EAD) |
+| Regulatory burden | Lower | Higher (model review) |
+| Capital benefit | Moderate | Potentially higher |
+
+<Callout type="warning" title="A-IRB Data Requirements">
+The 7-year LGD/EAD history must cover a complete credit cycle including a downturn period. Supervisors require evidence that internal estimates adequately reflect stressed economic conditions — not just benign periods.
+</Callout>
+
+## Minimum Requirements for IRB Approval
+
+Supervisors assess IRB applications against a checklist (e.g., ECB Guide to Internal Models, TRIM criteria):
+
+### 1. Rating System Design
+- Must differentiate risk meaningfully (at least 7–8 grade bins for performing, 1 default grade)
+- Grades must be assigned consistently across business lines
+- Overrides must be tracked and limited (< 10-15% of portfolio)
+
+### 2. Data Requirements
+- **PD**: Minimum 5 years of default experience, 7 years preferred
+- **LGD**: Minimum 7 years, must include downturn observations
+- **PD estimation**: At least 1 full credit cycle, TTC adjustment documented
+
+### 3. Use Test
+The rating system must be used in **material credit decisions** — pricing, limit setting, reserving. A model built only for regulatory capital fails the use test.
+
+### 4. Margin of Conservatism (MoC)
+
+MoC is an add-on to PD (and LGD) estimates to account for uncertainty in historical data:
+
+$$
+PD_{\text{regulatory}} = PD_{\text{estimated}} + MoC
+$$
+
+MoC increases with:
+- Fewer years of data
+- Data quality issues
+- Model deficiencies not fully corrected
+
+<PythonDemo id="moc" />
+
+## Specialised Lending: Supervisory Slotting
+
+For project finance, object finance, and commodities (collectively "specialised lending"), A-IRB is often not achievable due to insufficient default data. Basel prescribes **supervisory slotting** — ratings are mapped to five categories:
+
+| Category | Risk Weight |
+|---|---|
+| Strong | 70% |
+| Good | 90% |
+| Satisfactory | 115% |
+| Weak | 250% |
+| Default | 0% (separate treatment) |
+
+<Callout type="tip" title="Practical Implication">
+Banks financing infrastructure, real estate development, or shipping often cannot build A-IRB models due to small sample sizes and long recovery periods. Supervisory slotting provides a pragmatic regulatory framework, but the risk weights are deliberately conservative.
+</Callout>
+
+<NotebookDownload
+  notebookPath="/notebooks/10-basel-irb.ipynb"
+  title="IRB Implementation Guide — Full Notebook"
+  description="F-IRB vs A-IRB comparison, MoC calculation, use test evidence framework, and TRIM self-assessment checklist."
+  packageList={["numpy", "pandas", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="irb-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "A bank is applying for F-IRB approval for its corporate portfolio. Under F-IRB, what does the bank estimate vs what does the supervisor prescribe?",
+      options: [
+        "Bank estimates PD; supervisor prescribes LGD, EAD, and maturity",
+        "Bank estimates PD and LGD; supervisor prescribes EAD",
+        "Bank estimates all parameters; supervisor sets floors",
+        "Supervisor estimates all parameters"
+      ],
+      correctIndex: 0,
+      explanation: "Under F-IRB, banks estimate only PD using their own models. LGD is prescribed at 45% for senior unsecured corporate exposures, EAD is prescribed for off-balance-sheet items, and maturity is fixed at 2.5 years.",
+      difficulty: "recall"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "A credit risk model used only for regulatory capital reporting satisfies the Basel 'use test' requirement.",
+      correctAnswer: false,
+      explanation: "The use test requires that IRB ratings are integrated into credit decisions, pricing, and risk management — not just regulatory reporting. A model built exclusively for regulatory purposes, not embedded in actual lending decisions, fails the use test.",
+      difficulty: "application"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "The Margin of Conservatism (MoC) on PD estimates increases when:",
+      options: [
+        "The portfolio has fewer defaults in the historical data window",
+        "The portfolio has more years of historical data",
+        "The portfolio default rate is higher than average",
+        "The bank uses TTC rather than PIT PDs"
+      ],
+      correctIndex: 0,
+      explanation: "MoC compensates for estimation uncertainty. Fewer defaults → wider confidence intervals → larger statistical MoC. A portfolio with 5 defaults over 5 years requires much larger MoC than one with 500 defaults over the same period.",
+      difficulty: "application"
+    }
+  ]}
+/>

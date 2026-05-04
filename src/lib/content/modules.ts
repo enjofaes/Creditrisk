@@ -1,0 +1,193 @@
+import { Module } from "@/types/module";
+
+export const MODULES: Module[] = [
+  {
+    slug: "core-concepts",
+    title: "Core Concepts",
+    description: "Master the Expected Loss framework: PD, LGD, EAD, and portfolio credit risk fundamentals.",
+    icon: "BarChart3",
+    color: "blue",
+    chapters: [
+      {
+        slug: "expected-loss",
+        title: "Expected Loss: The Foundational Formula",
+        description: "Derive EL = PD × LGD × EAD from first principles with an interactive capital impact calculator.",
+        order: 1,
+        difficulty: "foundational",
+        estimatedMinutes: 20,
+        notebookPath: "/notebooks/01-expected-loss.ipynb",
+      },
+      {
+        slug: "pd-estimation",
+        title: "Probability of Default: Estimation Methods",
+        description: "Through-the-cycle vs point-in-time PD, KMV structural model, and empirical cohort analysis.",
+        order: 2,
+        difficulty: "foundational",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/02-pd-estimation.ipynb",
+      },
+      {
+        slug: "lgd-ead",
+        title: "LGD and EAD: Recovery and Exposure",
+        description: "Workout vs market LGD, credit conversion factors for revolving facilities, distributional properties.",
+        order: 3,
+        difficulty: "intermediate",
+        estimatedMinutes: 25,
+        notebookPath: "/notebooks/03-lgd-ead.ipynb",
+      },
+      {
+        slug: "portfolio-credit-risk",
+        title: "Portfolio Credit Risk and Correlation",
+        description: "Asset correlation, Gaussian copula, concentration risk metrics (HHI), VaR and CVaR.",
+        order: 4,
+        difficulty: "advanced",
+        estimatedMinutes: 35,
+        notebookPath: "/notebooks/04-portfolio-risk.ipynb",
+      },
+    ],
+  },
+  {
+    slug: "credit-scoring",
+    title: "Credit Scoring",
+    description: "Build production-grade scorecards using logistic regression, WoE/IV, and champion-challenger frameworks.",
+    icon: "ClipboardList",
+    color: "emerald",
+    chapters: [
+      {
+        slug: "logistic-regression",
+        title: "Logistic Regression for PD Modelling",
+        description: "Logit link function, coefficient interpretation as log-odds, building a PD model from raw application data.",
+        order: 1,
+        difficulty: "foundational",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/05-logistic-scorecard.ipynb",
+      },
+      {
+        slug: "woe-iv-analysis",
+        title: "Weight of Evidence and Information Value",
+        description: "Binning strategy, WoE encoding, IV threshold rules, and interactive WoE chart per feature.",
+        order: 2,
+        difficulty: "intermediate",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/06-woe-iv.ipynb",
+      },
+      {
+        slug: "scorecard-development",
+        title: "Building a Points-Based Scorecard",
+        description: "PDO scaling method to translate logistic regression coefficients into integer scorecard points.",
+        order: 3,
+        difficulty: "intermediate",
+        estimatedMinutes: 25,
+        notebookPath: "/notebooks/05-logistic-scorecard.ipynb",
+      },
+      {
+        slug: "model-performance",
+        title: "Scorecard Validation and Performance Metrics",
+        description: "Gini/AUC, KS statistic, PSI stability monitoring, and calibration testing.",
+        order: 4,
+        difficulty: "intermediate",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/06-woe-iv.ipynb",
+      },
+    ],
+  },
+  {
+    slug: "ml-models",
+    title: "Machine Learning Models",
+    description: "Apply gradient boosting and neural networks to credit risk, with SHAP explainability for regulatory requirements.",
+    icon: "BrainCircuit",
+    color: "violet",
+    chapters: [
+      {
+        slug: "xgboost-credit",
+        title: "XGBoost for Default Prediction",
+        description: "Gradient boosting intuition, hyperparameter tuning, and class imbalance handling with SMOTE.",
+        order: 1,
+        difficulty: "intermediate",
+        estimatedMinutes: 35,
+        notebookPath: "/notebooks/07-xgboost-credit.ipynb",
+      },
+      {
+        slug: "neural-networks",
+        title: "Neural Networks and Deep Learning",
+        description: "Tabular architectures, entity embeddings for categoricals, dropout regularisation, Platt scaling.",
+        order: 2,
+        difficulty: "advanced",
+        estimatedMinutes: 40,
+        notebookPath: "/notebooks/08-neural-networks.ipynb",
+      },
+      {
+        slug: "shap-explainability",
+        title: "SHAP for Model Interpretability",
+        description: "TreeExplainer, waterfall/beeswarm plots, global feature importance vs local explanations.",
+        order: 3,
+        difficulty: "intermediate",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/09-shap-explainability.ipynb",
+      },
+      {
+        slug: "model-comparison",
+        title: "Comparing ML vs Traditional Scorecards",
+        description: "Benchmark logistic regression, XGBoost, and neural network; Gini uplift vs regulatory acceptance.",
+        order: 4,
+        difficulty: "advanced",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/07-xgboost-credit.ipynb",
+      },
+    ],
+  },
+  {
+    slug: "regulation",
+    title: "Regulation & Validation",
+    description: "Navigate Basel II/III capital requirements, IFRS 9 impairment staging, and SR 11-7 model validation standards.",
+    icon: "Scale",
+    color: "amber",
+    chapters: [
+      {
+        slug: "basel-framework",
+        title: "Basel II/III Capital Requirements",
+        description: "Three pillars, standardised vs IRB approaches, IRB risk-weight formula, interactive capital calculator.",
+        order: 1,
+        difficulty: "intermediate",
+        estimatedMinutes: 35,
+        notebookPath: "/notebooks/10-basel-irb.ipynb",
+      },
+      {
+        slug: "irb-approach",
+        title: "IRB Implementation: Foundation vs Advanced",
+        description: "F-IRB vs A-IRB distinction, minimum data history, margin of conservatism (MoC), specialised lending.",
+        order: 2,
+        difficulty: "advanced",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/10-basel-irb.ipynb",
+      },
+      {
+        slug: "ifrs9-staging",
+        title: "IFRS 9 Impairment: Three-Stage Model",
+        description: "SICR definition, 12-month vs lifetime ECL, staging triggers, interactive migration flow chart.",
+        order: 3,
+        difficulty: "intermediate",
+        estimatedMinutes: 30,
+        notebookPath: "/notebooks/11-ifrs9-staging.ipynb",
+      },
+      {
+        slug: "model-validation",
+        title: "Independent Model Validation",
+        description: "SR 11-7 / SS1/23 standards, conceptual soundness, outcome testing, back-testing, ongoing monitoring.",
+        order: 4,
+        difficulty: "advanced",
+        estimatedMinutes: 35,
+        notebookPath: "/notebooks/11-ifrs9-staging.ipynb",
+      },
+    ],
+  },
+];
+
+export function getModule(slug: string) {
+  return MODULES.find((m) => m.slug === slug);
+}
+
+export function getChapter(moduleSlug: string, chapterSlug: string) {
+  const module = getModule(moduleSlug);
+  return module?.chapters.find((c) => c.slug === chapterSlug);
+}

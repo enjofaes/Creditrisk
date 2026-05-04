@@ -1,0 +1,117 @@
+---
+title: "XGBoost for Default Prediction"
+description: "Apply gradient boosting to credit risk: understand the algorithm, tune hyperparameters, and handle class imbalance."
+module: "ml-models"
+order: 1
+difficulty: "intermediate"
+estimatedMinutes: 35
+notebookPath: "/notebooks/07-xgboost-credit.ipynb"
+tags: ["XGBoost", "gradient boosting", "SMOTE", "class imbalance", "hyperparameters"]
+---
+
+## Why Gradient Boosting for Credit?
+
+XGBoost and LightGBM consistently outperform logistic regression on discrimination metrics (Gini) for large tabular credit datasets. Key advantages:
+
+- Handles non-linear relationships and interactions automatically
+- Robust to outliers via tree structure
+- Built-in handling of missing values
+- Strong regularisation options (L1/L2)
+
+The trade-off: **less interpretable** than logistic regression, requiring post-hoc explainability (SHAP) for regulatory use.
+
+## Gradient Boosting in 60 Seconds
+
+Gradient boosting builds an ensemble sequentially. Each new tree corrects the errors of the previous ensemble by fitting the **negative gradient** of the loss function:
+
+$$
+F_m(x) = F_{m-1}(x) + \eta \cdot h_m(x)
+$$
+
+Where $F_m$ is the $m$-th model, $\eta$ is the learning rate, and $h_m$ is a shallow tree fitted to residuals.
+
+XGBoost adds second-order (Newton) gradients and explicit regularisation:
+
+$$
+\mathcal{L}^{(m)} = \sum_i \ell(y_i, \hat{y}_i^{(m-1)} + f_m(x_i)) + \Omega(f_m)
+$$
+
+$$
+\Omega(f) = \gamma T + \frac{1}{2}\lambda \sum_{j=1}^T w_j^2
+$$
+
+## Class Imbalance in Credit Data
+
+Default rates of 1–5% create severe class imbalance. Common approaches:
+
+| Approach | Pros | Cons |
+|---|---|---|
+| `scale_pos_weight` | Simple, no resampling | Doesn't change training distribution |
+| SMOTE oversampling | Generates synthetic minority examples | Can introduce noise |
+| Threshold tuning | Preserves calibration | Doesn't affect model training |
+| Class weighting | Standard, well understood | May reduce precision |
+
+<PythonDemo id="xgb-credit" />
+
+## Hyperparameter Sensitivity
+
+Key XGBoost hyperparameters for credit risk:
+
+| Parameter | Default | Credit Risk Guidance |
+|---|---|---|
+| `max_depth` | 6 | 3–5: shallower trees prevent overfitting on small samples |
+| `learning_rate` | 0.3 | 0.01–0.1: smaller = more robust, needs more trees |
+| `subsample` | 1.0 | 0.7–0.9: row subsampling adds regularisation |
+| `scale_pos_weight` | 1 | Set to neg/pos ratio to handle imbalance |
+| `min_child_weight` | 1 | Increase for sparse default events |
+
+<NotebookDownload
+  notebookPath="/notebooks/07-xgboost-credit.ipynb"
+  title="XGBoost for Credit Risk — Full Notebook"
+  description="Complete pipeline: feature engineering, XGBoost training, SMOTE comparison, hyperparameter grid search, and SHAP analysis."
+  packageList={["numpy", "pandas", "xgboost", "scikit-learn", "imbalanced-learn", "shap", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="xgb-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "XGBoost's `scale_pos_weight = 20` in a credit model means:",
+      options: [
+        "The model will oversample the default class by 20×",
+        "Each default instance is upweighted by 20 in the loss function",
+        "The model uses 20% more trees for the positive class",
+        "The learning rate is scaled by 1/20"
+      ],
+      correctIndex: 1,
+      explanation: "scale_pos_weight tells XGBoost to weight the positive class (defaults) more heavily in the loss function to compensate for class imbalance. A value of 20 means each default counts 20× as much as a non-default during gradient computation.",
+      difficulty: "recall"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "Reducing max_depth in XGBoost generally improves out-of-sample AUC when the default dataset has fewer than 5,000 defaults.",
+      correctAnswer: true,
+      explanation: "Shallower trees reduce overfitting. With sparse default events (< 5,000 observations), deep trees memorise training data. max_depth = 3–4 is typically optimal for credit datasets with low default rates.",
+      difficulty: "application"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "Which statement best explains why XGBoost models face regulatory challenges in credit risk?",
+      options: [
+        "XGBoost cannot estimate probabilities, only rankings",
+        "XGBoost does not satisfy GDPR right-to-explanation requirements without post-hoc methods",
+        "XGBoost models always overfit in production",
+        "Regulators prohibit ensemble methods in credit models"
+      ],
+      correctIndex: 1,
+      explanation: "The primary regulatory concern is explainability. GDPR Article 22 (and analogous regulations) requires the ability to explain individual decisions. XGBoost is a black box without SHAP or similar post-hoc explanations, while logistic regression provides coefficient-based explanations natively.",
+      difficulty: "analysis"
+    }
+  ]}
+/>

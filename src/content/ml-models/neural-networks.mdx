@@ -1,0 +1,100 @@
+---
+title: "Neural Networks and Deep Learning for Credit"
+description: "Build tabular neural networks with entity embeddings, dropout regularisation, and Platt scaling for calibrated PD estimates."
+module: "ml-models"
+order: 2
+difficulty: "advanced"
+estimatedMinutes: 40
+notebookPath: "/notebooks/08-neural-networks.ipynb"
+tags: ["neural networks", "entity embeddings", "dropout", "calibration", "Platt scaling"]
+---
+
+## Neural Networks on Tabular Data
+
+Deep learning has taken over image and NLP tasks, but **tabular data is different**. Credit risk datasets have:
+
+- Moderate sample sizes (10k–10M rows)
+- Mixed types (continuous, ordinal, categorical)
+- Strong domain-logic constraints
+- Regulatory interpretability requirements
+
+Research (e.g., "Why do tree-based models still outperform deep learning on tabular data?", Grinsztajn 2022) shows that gradient boosting often matches or beats NNs on tabular data. However, NNs offer unique capabilities:
+
+- **Entity embeddings** for high-cardinality categoricals (postcode, employer, industry)
+- **Multi-task learning** (predict PD and LGD jointly)
+- **Temporal models** (LSTM for payment sequence data)
+
+## Entity Embeddings
+
+Instead of one-hot encoding a categorical variable with 10,000 levels, entity embeddings map each category to a learned dense vector of size $d \ll N$:
+
+$$
+e_{\text{postcode}} = E_{\text{postcode}}[\text{index}] \in \mathbb{R}^d
+$$
+
+The embedding dimension is typically $d = \min(50, \lceil N/2 \rceil)$.
+
+<PythonDemo id="nn-credit" />
+
+## Platt Scaling: Calibrating Neural Network Outputs
+
+Neural networks often produce poorly calibrated probabilities — the raw softmax output may not correspond to empirical default rates. **Platt scaling** fits a logistic regression on the model outputs to recalibrate:
+
+$$
+\hat{p}_{\text{calib}} = \frac{1}{1 + e^{-(A \cdot f(x) + B)}}
+$$
+
+Where $A$ and $B$ are fitted on a held-out calibration set.
+
+<PythonDemo id="platt" />
+
+<NotebookDownload
+  notebookPath="/notebooks/08-neural-networks.ipynb"
+  title="Neural Networks for Credit Risk — Full Notebook"
+  description="PyTorch tabular network with entity embeddings, dropout, Platt scaling, and multi-task PD/LGD prediction."
+  packageList={["numpy", "pandas", "scikit-learn", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="nn-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "For a categorical variable 'employer_industry' with 500 unique values, entity embedding with d=30 stores:",
+      options: [
+        "500 × 30 = 15,000 parameters",
+        "30 parameters",
+        "500 parameters",
+        "30 × log(500) parameters"
+      ],
+      correctIndex: 0,
+      explanation: "An embedding matrix has one row per category and d columns: 500 × 30 = 15,000 parameters. Compare to one-hot encoding which would require a 500-dimensional input layer — the embedding is both more compact and learns meaningful geometry.",
+      difficulty: "application"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "A neural network with high AUC is guaranteed to produce well-calibrated PD estimates.",
+      correctAnswer: false,
+      explanation: "Discrimination (AUC) and calibration are independent. Neural networks trained with cross-entropy loss can discriminate well but produce biased probability estimates, particularly at extremes. Platt scaling or temperature scaling corrects this.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "Why is feature standardisation (zero mean, unit variance) more critical for neural networks than for XGBoost?",
+      options: [
+        "Neural networks can't handle negative values",
+        "Gradient-based optimisation is sensitive to feature scale; XGBoost's tree splits are scale-invariant",
+        "It prevents entity embedding collapse",
+        "Neural networks use L1 regularisation which requires standardised inputs"
+      ],
+      correctIndex: 1,
+      explanation: "Tree-based methods find optimal split points regardless of feature scale. Neural networks use gradient descent, where large differences in feature magnitude cause uneven gradient steps and slow or unstable convergence. Standardisation ensures all features contribute comparably.",
+      difficulty: "application"
+    }
+  ]}
+/>

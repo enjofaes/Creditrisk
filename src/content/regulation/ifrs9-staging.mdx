@@ -1,0 +1,114 @@
+---
+title: "IFRS 9 Impairment: The Three-Stage Model"
+description: "Master the SICR definition, 12-month vs lifetime ECL, staging triggers, and the forward-looking macroeconomic overlay."
+module: "regulation"
+order: 3
+difficulty: "intermediate"
+estimatedMinutes: 30
+notebookPath: "/notebooks/11-ifrs9-staging.ipynb"
+tags: ["IFRS 9", "ECL", "staging", "SICR", "impairment", "provisioning"]
+---
+
+## The IFRS 9 Framework
+
+IFRS 9 replaced IAS 39 in January 2018, fundamentally changing how banks provision for credit losses. The key shift: from **incurred loss** (provision only when default has occurred) to **expected credit loss** (provision based on forward-looking probability of future default).
+
+### The Three Stages
+
+| Stage | Trigger | Provision Basis |
+|---|---|---|
+| **Stage 1** | No significant credit deterioration | 12-month ECL |
+| **Stage 2** | Significant Increase in Credit Risk (SICR) | Lifetime ECL |
+| **Stage 3** | Credit-impaired (defaulted) | Lifetime ECL |
+
+The transition from Stage 1 to Stage 2 is the most analytically challenging — and the most impactful for provision volatility.
+
+## Interactive Staging Model
+
+<IfrsStageChart />
+
+## Significant Increase in Credit Risk (SICR)
+
+SICR is met when, since origination, the credit risk on a financial instrument has **increased significantly**. The standard doesn't prescribe specific thresholds — banks must exercise judgement.
+
+### Common SICR Indicators
+
+**Quantitative (primary)**:
+- PD has increased by more than a threshold multiple (e.g., 2× or 3×) since origination
+- Lifetime PD exceeds an absolute threshold
+
+**Qualitative (secondary)**:
+- Borrower placed on watchlist
+- Covenant breaches
+- External credit rating downgrade
+- Forbearance granted
+- Industry deterioration
+
+<Callout type="info" title="The 30-Day Rebuttable Presumption">
+IFRS 9 includes a rebuttable presumption that SICR has occurred when payments are more than 30 days past due. Banks can rebut this (e.g., administrative delays) but must have strong evidence.
+</Callout>
+
+## Expected Credit Loss Calculation
+
+$$
+ECL_{12m} = PD_{12m} \times LGD \times EAD \times D
+$$
+
+$$
+ECL_{\text{lifetime}} = \sum_{t=1}^{T} PD_{t|t-1} \times LGD_t \times EAD_t \times D_t
+$$
+
+Where $D_t$ is the discount factor and $PD_{t|t-1}$ is the marginal (conditional) PD at time $t$.
+
+<PythonDemo id="ecl-calc" />
+
+<NotebookDownload
+  notebookPath="/notebooks/11-ifrs9-staging.ipynb"
+  title="IFRS 9 Staging — Full Notebook"
+  description="SICR triggers, lifetime ECL, macroeconomic overlay scenarios, and Stage 2 cliff effect analysis."
+  packageList={["numpy", "pandas", "matplotlib"]}
+/>
+
+## Quiz
+
+<QuizBlock
+  quizId="ifrs9-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "mcq",
+      prompt: "A mortgage originated in 2022 with PD = 1.5%. In 2024, the borrower's PD is remeasured at 4.0%. Assuming a SICR threshold of 2× origination PD, the loan:",
+      options: [
+        "Remains in Stage 1 — absolute PD is still low",
+        "Moves to Stage 2 — PD has increased more than 2× (4.0% > 3.0%)",
+        "Moves to Stage 3 — any PD increase triggers Stage 3",
+        "Remains in Stage 1 — SICR requires 30 days past due"
+      ],
+      correctIndex: 1,
+      explanation: "The SICR threshold of 2× origination PD means 2 × 1.5% = 3.0%. Since current PD = 4.0% > 3.0%, SICR is triggered and the loan moves to Stage 2 with lifetime ECL provisioning.",
+      difficulty: "application"
+    },
+    {
+      id: "q2",
+      type: "true_false",
+      prompt: "Moving a loan from Stage 1 to Stage 2 always increases the provision by exactly the ratio of lifetime ECL to 12-month ECL.",
+      correctAnswer: false,
+      explanation: "The provision cliff at Stage 1→2 transition depends on many factors: remaining tenor (longer tenors = bigger cliff), macro overlay (stressed scenarios increase lifetime ECL more), LGD, and discount rate. The ratio varies greatly across portfolios and scenarios.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q3",
+      type: "mcq",
+      prompt: "IFRS 9 requires ECL estimates to incorporate forward-looking information. This means:",
+      options: [
+        "ECL is calculated using historical default rates only",
+        "PD estimates must include macroeconomic forecasts such as GDP growth and unemployment",
+        "ECL must be stress-tested under three macroeconomic scenarios",
+        "Future cash flows are discounted using the risk-free rate"
+      ],
+      correctIndex: 1,
+      explanation: "IFRS 9 paragraph 5.5.17 explicitly requires forward-looking information, including macroeconomic forecasts. This is a fundamental departure from IAS 39's historical loss approach. Most banks use probability-weighted scenarios (base, upside, downside) to produce forward-looking ECL.",
+      difficulty: "recall"
+    }
+  ]}
+/>
