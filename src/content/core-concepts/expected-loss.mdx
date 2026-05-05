@@ -137,6 +137,28 @@ A loan with PD = 5% and LGD = 45% needs at minimum 225 basis points (2.25%) abov
       correctIndex: 1,
       explanation: "Minimum spread = PD × LGD = 4% × 50% = 2.0% = 200bps. At 150bps, the bank is not covering expected losses and is destroying economic value.",
       difficulty: "analysis"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "Unexpected Loss (UL) is the component of credit risk that loan loss provisions are designed to absorb.",
+      correctAnswer: false,
+      explanation: "Loan loss provisions (and the Expected Loss) cover the average anticipated loss. Unexpected Loss — the deviation above EL in adverse scenarios — is covered by regulatory and economic capital. This distinction is fundamental to bank capital adequacy frameworks.",
+      difficulty: "recall"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A bank holds a portfolio of 500 small business loans each with EL = $1,000. The total portfolio EL is $500,000. A new regulatory requirement doubles each loan's LGD estimate while PD and EAD are unchanged. What is the new portfolio EL?",
+      options: [
+        "$500,000 — EL is unaffected by LGD changes",
+        "$750,000 — LGD has a partial effect on EL",
+        "$1,000,000 — doubling LGD doubles EL",
+        "Cannot be determined without knowing the correlation"
+      ],
+      correctIndex: 2,
+      explanation: "EL = PD x LGD x EAD. LGD enters linearly, so doubling LGD doubles EL for every loan and therefore doubles the total portfolio EL to $1,000,000. Correlation affects the loss distribution shape (UL) but not the expected value.",
+      difficulty: "application"
     }
   ]}
 />

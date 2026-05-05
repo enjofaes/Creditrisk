@@ -97,6 +97,42 @@ A well-calibrated model produces predicted PDs that match observed default rates
       correctIndex: 1,
       explanation: "Interpretability and regulatory acceptance are the main reasons. Regulators (ECB, PRA, Fed) require model documentation and explainability standards that logistic regression naturally satisfies through its coefficient structure.",
       difficulty: "recall"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A logistic regression PD model outputs a log-odds of -2.5 for a particular borrower. What is the approximate predicted PD?",
+      options: [
+        "2.5%",
+        "7.6%",
+        "17.0%",
+        "25.0%"
+      ],
+      correctIndex: 1,
+      explanation: "PD = 1 / (1 + e^2.5) = 1 / (1 + 12.18) = 1 / 13.18 = approximately 7.6%. The sigmoid transformation maps log-odds of -2.5 to a probability well below 50%, which is expected for a log-odds value significantly negative.",
+      difficulty: "application"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "In a logistic regression credit scorecard, a negative coefficient on 'months_since_last_delinquency' indicates that borrowers with longer delinquency-free periods are riskier.",
+      correctAnswer: false,
+      explanation: "A negative coefficient means the feature is inversely related to the log-odds of default. More months since last delinquency (longer clean period) lowers the log-odds, meaning lower default risk. Borrowers with a longer clean history are safer, not riskier.",
+      difficulty: "application"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A credit analyst finds that their logistic regression model has a Hosmer-Lemeshow test p-value of 0.03. What does this indicate?",
+      options: [
+        "The model has excellent discrimination power",
+        "The predicted probabilities are poorly calibrated — observed rates deviate significantly from predicted rates",
+        "The model uses too many features and is overfitting",
+        "3% of predictions are incorrect"
+      ],
+      correctIndex: 1,
+      explanation: "The Hosmer-Lemeshow test assesses calibration by comparing observed vs predicted default rates across decile buckets of predicted probability. A p-value of 0.03 rejects the null hypothesis of good calibration at the 5% level, indicating systematic differences between predicted PDs and actual default rates. Recalibration or model revision is warranted.",
+      difficulty: "analysis"
     }
   ]}
 />

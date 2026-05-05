@@ -106,6 +106,42 @@ For retail portfolios, empirical cohort analysis is the workhorse. You track a c
       correctIndex: 1,
       explanation: "Basel IRB rules require TTC PDs for capital calculation to prevent pro-cyclicality. If capital could fall in booms and rise in recessions, it would amplify the credit cycle.",
       difficulty: "analysis"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "In cohort analysis for retail PD estimation, a cohort is typically defined as:",
+      options: [
+        "All borrowers who defaulted in a given calendar year",
+        "All borrowers who were performing at a reference date and are then observed over a 12-month outcome window",
+        "All borrowers with the same credit score band",
+        "A random sample of 10% of the portfolio at origination"
+      ],
+      correctIndex: 1,
+      explanation: "A cohort is formed at a reference date from all performing borrowers, then their default status is observed over the following 12 months. The observed default rate of that cohort estimates the one-year PD. Multiple overlapping cohorts improve estimation stability.",
+      difficulty: "recall"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "A firm with Distance to Default of 0.5 is closer to default than a firm with Distance to Default of 2.0.",
+      correctAnswer: true,
+      explanation: "Distance to Default measures how many standard deviations of asset returns separate the firm from its default point. DD = 0.5 means asset value is only half a standard deviation above the default threshold — very close to default — while DD = 2.0 means the firm is much further away.",
+      difficulty: "recall"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A bank's PIT PD model assigns a 6% PD to a retail borrower during a recession. The same borrower's TTC PD is 2%. Which statement correctly describes the relationship between these two estimates?",
+      options: [
+        "The TTC PD is wrong — it should always be higher than PIT PD",
+        "The PIT PD reflects current recessionary conditions; the TTC PD reflects the long-run average across the cycle",
+        "The gap between PIT and TTC PD is a regulatory arbitrage opportunity",
+        "The two estimates should be averaged to produce the IFRS 9 PD"
+      ],
+      correctIndex: 1,
+      explanation: "PIT PD rises in recessions and falls in expansions. TTC PD is designed to be the long-run average, abstracting away cyclical movements. The 4-percentage-point gap reflects cyclical deterioration. IFRS 9 requires the PIT estimate (6%); Basel IRB capital uses TTC (2%) to prevent pro-cyclical capital relief.",
+      difficulty: "application"
     }
   ]}
 />

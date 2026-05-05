@@ -103,6 +103,42 @@ A CCF of 75% means that, on average, borrowers draw down 75% of their unused com
       correctIndex: 1,
       explanation: "Under F-IRB, supervisors prescribe LGD values (e.g., 45% for senior unsecured). Under A-IRB, banks with sufficient historical data and supervisory approval can use their own LGD estimates.",
       difficulty: "recall"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A corporate borrower has a revolving credit facility with a drawn balance of $3,000,000 and an undrawn commitment of $2,000,000. The bank's CCF estimate is 60%. What is the EAD?",
+      options: [
+        "$3,000,000",
+        "$4,200,000",
+        "$5,000,000",
+        "$3,600,000"
+      ],
+      correctIndex: 1,
+      explanation: "EAD = Drawn Balance + CCF x Undrawn Commitment = $3,000,000 + 0.60 x $2,000,000 = $3,000,000 + $1,200,000 = $4,200,000. The CCF captures expected drawdown of the undrawn portion before default.",
+      difficulty: "application"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "LGD estimates should be adjusted downward (lower LGD) when estimating downturn regulatory capital, because collateral values tend to be higher during economic downturns.",
+      correctAnswer: false,
+      explanation: "Downturn LGD is deliberately higher, not lower. During recessions, collateral values fall (e.g., real estate prices drop), forced-sale discounts increase, and recovery timelines lengthen. Basel and EBA guidelines require banks to use downturn LGD estimates for regulatory capital to capture this adverse correlation between PD and LGD.",
+      difficulty: "application"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A bank uses workout LGD for its regulatory capital model. The workout process for a defaulted corporate loan took 3 years. Which adjustment is essential when computing LGD?",
+      options: [
+        "Adding a margin of conservatism equal to 10% of recoveries",
+        "Discounting all cash flows received during the workout back to the default date",
+        "Using the market price of the debt at default instead of actual recoveries",
+        "Capping LGD at the regulatory floor of 25%"
+      ],
+      correctIndex: 1,
+      explanation: "Workout LGD must discount all recovery cash flows back to the default date using an appropriate discount rate (typically the original effective interest rate). Failing to discount overstates recoveries and understates LGD, because money received 3 years after default is worth less than money received immediately.",
+      difficulty: "analysis"
     }
   ]}
 />

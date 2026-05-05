@@ -103,6 +103,42 @@ $$
       correctIndex: 1,
       explanation: "HHI of 0.18 falls in the 'significant concentration' range (0.10–0.25). The effective number of independent exposures is only 1/0.18 ≈ 5.6, meaning the portfolio behaves like 5–6 equal-sized loans despite potentially having many more.",
       difficulty: "analysis"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "In the Gaussian copula model for portfolio credit risk, the common factor Z represents:",
+      options: [
+        "The idiosyncratic default risk specific to each firm",
+        "The systematic macroeconomic factor that drives correlated defaults across firms",
+        "The asset correlation between any two firms in the portfolio",
+        "The average PD of the portfolio"
+      ],
+      correctIndex: 1,
+      explanation: "In the one-factor Gaussian copula model, Z is the common systematic factor (e.g., the state of the economy) shared by all firms. When Z takes a very negative value — a severe recession — all firms' asset returns are simultaneously depressed, driving correlated defaults. The idiosyncratic term epsilon_i captures firm-specific risk.",
+      difficulty: "recall"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "A perfectly diversified portfolio with zero asset correlation between loans has zero unexpected loss.",
+      correctAnswer: false,
+      explanation: "Even with zero correlation, individual loans still carry idiosyncratic default risk. A portfolio of uncorrelated loans does have a much narrower loss distribution (by the law of large numbers), but unexpected loss only approaches zero as the number of exposures approaches infinity. In practice, finite portfolios always retain some unexpected loss even under zero correlation.",
+      difficulty: "application"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A risk manager observes that the Gaussian copula model significantly underestimated portfolio losses during the 2008 financial crisis. The most likely explanation is:",
+      options: [
+        "The model used too many obligors in the simulation",
+        "The Gaussian copula underestimates tail dependence — correlated extreme defaults are more frequent than the normal distribution implies",
+        "The model used PIT PDs rather than TTC PDs",
+        "HHI concentration limits were too loose"
+      ],
+      correctIndex: 1,
+      explanation: "The Gaussian copula's critical flaw is thin tails: the normal distribution assigns very low probability to simultaneous extreme defaults. In reality, tail dependence (joint extreme losses) is much higher than the Gaussian assumption implies. Alternative copulas — Student-t, Clayton — better capture this, which is why the Gaussian copula's failure in 2008 led to fundamental rethinking of credit portfolio models.",
+      difficulty: "analysis"
     }
   ]}
 />
