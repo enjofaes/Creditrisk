@@ -80,7 +80,7 @@ Key XGBoost hyperparameters for credit risk:
     {
       id: "q1",
       type: "mcq",
-      prompt: "XGBoost's `scale_pos_weight = 20` in a credit model means:",
+      prompt: "XGBoost's scale_pos_weight = 20 in a credit model means:",
       options: [
         "The model will oversample the default class by 20×",
         "Each default instance is upweighted by 20 in the loss function",
@@ -111,6 +111,42 @@ Key XGBoost hyperparameters for credit risk:
       ],
       correctIndex: 1,
       explanation: "The primary regulatory concern is explainability. GDPR Article 22 (and analogous regulations) requires the ability to explain individual decisions. XGBoost is a black box without SHAP or similar post-hoc explanations, while logistic regression provides coefficient-based explanations natively.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "In gradient boosting, what does the learning rate (eta) parameter control?",
+      options: [
+        "The number of trees in the ensemble",
+        "The fraction of features sampled at each split",
+        "The step size applied when adding each new tree to the ensemble",
+        "The maximum depth allowed for each decision tree"
+      ],
+      correctIndex: 2,
+      explanation: "The learning rate (eta) shrinks the contribution of each new tree: F_m(x) = F_{m-1}(x) + eta * h_m(x). A smaller eta (e.g., 0.01-0.05) means each tree has less influence, requiring more trees to reach the same fit. This regularises the model and typically yields better generalisation, at the cost of longer training time. For credit risk models with sparse defaults, smaller learning rates are preferred.",
+      difficulty: "recall"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "SMOTE (Synthetic Minority Oversampling Technique) generates synthetic default examples by interpolating between existing defaults in feature space, which can introduce noise into the training data.",
+      correctAnswer: true,
+      explanation: "SMOTE creates synthetic minority-class (default) observations by interpolating between a real default and one of its k-nearest neighbours in feature space. While this helps address class imbalance, it can create unrealistic synthetic examples — particularly when the feature space has complex boundaries or when defaults have heterogeneous characteristics. For credit risk, SMOTE should be validated carefully and compared against simpler alternatives like scale_pos_weight.",
+      difficulty: "application"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A credit model team trains an XGBoost model on data from 2018-2022 (pre-pandemic and pandemic) and tests it on 2023 data. The AUC on the test set is 0.71, but on a holdout from 2024 it drops to 0.63. What is the most likely explanation?",
+      options: [
+        "XGBoost always degrades after two years in production",
+        "The model has overfitted to the COVID-19 default patterns in the training data that do not generalise to 2024 behaviour",
+        "The 2024 holdout sample is too small to produce a reliable AUC estimate",
+        "XGBoost requires retraining every 12 months by regulatory mandate"
+      ],
+      correctIndex: 1,
+      explanation: "A large AUC gap between the 2023 test set and 2024 holdout suggests the model learned relationships specific to the 2020-2022 COVID period — including government forbearance patterns, unusual delinquency behaviour, and payment holiday effects — that do not persist in 2024. This is a form of covariate shift. The solution is to review feature importance (COVID-era features may need to be excluded or down-weighted) and potentially retrain on more recent data.",
       difficulty: "analysis"
     }
   ]}

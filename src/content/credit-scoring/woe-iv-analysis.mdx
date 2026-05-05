@@ -105,6 +105,42 @@ The chart below shows WoE values for a credit score feature:
       correctAnswer: true,
       explanation: "One of WoE's practical advantages is that missing values can be treated as their own bin with its own WoE value. This allows the model to learn whether missingness itself is predictive of default, rather than imputing or discarding missing observations.",
       difficulty: "application"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A feature 'months_employed' has IV = 0.08 in a retail credit scorecard. Based on the IV interpretation table, how should this feature be treated?",
+      options: [
+        "Exclude — IV below 0.02 means the feature is useless",
+        "Include as a weak predictor — IV of 0.02 to 0.10 provides some signal",
+        "Include as a strong predictor — IV above 0.05 is highly significant",
+        "Investigate for data leakage — IV above 0.05 is suspicious"
+      ],
+      correctIndex: 1,
+      explanation: "IV of 0.08 falls in the 0.02-0.10 range, classified as a weak predictor. The feature has some discriminating power but is not a primary driver. In practice it may still be included if it improves model stability or provides regulatory documentation value, but should not be relied upon as a core predictor.",
+      difficulty: "recall"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "In WoE analysis, a bin where the default rate equals the overall portfolio default rate will have a WoE value of zero.",
+      correctAnswer: true,
+      explanation: "WoE = ln(pct_bad / pct_good). When a bin's default rate equals the portfolio average, the proportion of bads equals the proportion of goods in that bin, so pct_bad / pct_good = 1, and ln(1) = 0. This means the bin provides no directional information about risk relative to the portfolio average.",
+      difficulty: "recall"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A scorecard developer uses WoE encoding and then splits one low-default-rate bin into two sub-bins to improve model granularity. One sub-bin ends up with zero defaults. Why is this a problem?",
+      options: [
+        "It violates the monotonicity constraint on WoE values",
+        "WoE is undefined when a bin has zero defaults because ln(0) is undefined",
+        "The IV of the feature will exceed 0.50, indicating data leakage",
+        "Zero-default bins automatically receive a WoE of +1"
+      ],
+      correctIndex: 1,
+      explanation: "WoE = ln(pct_bad / pct_good). If a bin has zero defaults, pct_bad = 0 and the logarithm is undefined (ln(0) = negative infinity). Practitioners handle this by applying a small adjustment (adding 0.5 to both counts) or by merging sparse bins. This is why minimum observation counts per bin — typically at least 5% of the sample and at least 5 events — are enforced during optimal binning.",
+      difficulty: "application"
     }
   ]}
 />

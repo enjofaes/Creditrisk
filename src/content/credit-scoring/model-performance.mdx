@@ -103,6 +103,42 @@ Where $A_b$ = actual (current) distribution, $E_b$ = expected (development) dist
       correctAnswer: true,
       explanation: "KS = max|cum_bad - cum_good| across all score thresholds. The score value at which KS is achieved is the optimal cut-off for maximizing true positives minus false positives.",
       difficulty: "application"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A retail credit model has AUC = 0.72. What is the corresponding Gini coefficient?",
+      options: [
+        "0.72",
+        "0.44",
+        "0.36",
+        "0.28"
+      ],
+      correctIndex: 1,
+      explanation: "Gini = 2 x AUC - 1 = 2 x 0.72 - 1 = 0.44. The Gini coefficient is simply a linear transformation of AUC, ranging from 0 (no discrimination) to 1 (perfect discrimination). A Gini of 0.44 is acceptable for a retail consumer portfolio, which typically requires Gini > 0.40.",
+      difficulty: "recall"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "A model with perfect calibration but Gini = 0 would be useful for setting portfolio-level provisions but useless for approving or rejecting individual loan applications.",
+      correctAnswer: true,
+      explanation: "Calibration ensures the average predicted PD matches the observed default rate — useful for provisioning at portfolio level. Discrimination (Gini/AUC) measures the ability to rank individuals from safest to riskiest. A model with Gini = 0 assigns the same score to all borrowers, making individual approval/rejection decisions meaningless. Both dimensions are required for a well-functioning credit model.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A model's PSI is calculated at 0.12 after six months in production. The development sample was from 2021-2022 and the monitoring sample is from 2023. Which action is most appropriate?",
+      options: [
+        "No action required — PSI below 0.25 means the model is stable",
+        "Investigate which score bands have shifted and assess whether model recalibration is needed",
+        "Immediately decommission the model and revert to judgemental credit assessment",
+        "Reduce the approval rate cut-off by 5 points to compensate for population shift"
+      ],
+      correctIndex: 1,
+      explanation: "PSI of 0.12 falls in the 0.10-0.25 'investigate and monitor' zone. The appropriate response is to identify which score bands (and underlying features) have drifted, then assess whether performance metrics (Gini, KS) have also degraded. Recalibration — adjusting the intercept to realign predicted PDs with observed rates — may be sufficient without a full model rebuild. Automatic cut-off adjustments without understanding the root cause are inappropriate.",
+      difficulty: "application"
     }
   ]}
 />

@@ -106,6 +106,42 @@ Where:
       correctAnswer: true,
       explanation: "Lower correlation means losses are more independent across borrowers, so the portfolio loss distribution has a narrower tail. At the 99.9th percentile, a portfolio with lower correlation has a smaller gap between expected and unexpected loss, requiring less capital.",
       difficulty: "analysis"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "Which of the three Basel pillars requires banks to publicly disclose their risk exposures, capital adequacy ratios, and risk management practices?",
+      options: [
+        "Pillar 1 — Minimum Capital Requirements",
+        "Pillar 2 — Supervisory Review Process",
+        "Pillar 3 — Market Discipline",
+        "Pillar 4 — Stress Testing (introduced in Basel IV)"
+      ],
+      correctIndex: 2,
+      explanation: "Pillar 3 (Market Discipline) mandates public disclosure of a bank's risk profile, capital structure, and risk exposures. The idea is that market participants — investors, counterparties, analysts — will discipline banks that take excessive risks if they have sufficient information. Pillar 1 sets minimum capital, and Pillar 2 covers the supervisory review and internal capital adequacy assessment (ICAAP).",
+      difficulty: "recall"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "Under the Standardised Approach to credit risk, banks with no external credit rating on their corporate borrowers must apply a flat 100% risk weight.",
+      correctAnswer: true,
+      explanation: "Basel's Standardised Approach maps external credit ratings to prescribed risk weights. For unrated corporate exposures, Basel III finalisation (and most national implementations) assigns a 100% risk weight as the default. This is a key limitation of the SA — it cannot distinguish between a highly creditworthy unrated SME and a speculative one, whereas IRB models can.",
+      difficulty: "recall"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A bank holds a mortgage portfolio with total IRB risk-weighted assets of $800 million. The standardised approach would produce $1,200 million of RWA. Under Basel III finalisation's output floor, what is the minimum RWA the bank must report?",
+      options: [
+        "$800 million — the bank uses its own IRB estimate",
+        "$870 million — 72.5% of the standardised approach applied as an add-on",
+        "$870 million — 72.5% of $1,200 million",
+        "$1,200 million — the output floor requires using the standardised approach"
+      ],
+      correctIndex: 2,
+      explanation: "The output floor requires that IRB total RWA be at least 72.5% of the standardised approach RWA: 0.725 x $1,200 million = $870 million. Since the IRB estimate of $800 million is below this floor, the bank must report $870 million. The output floor closes the gap between sophisticated IRB models and the simpler SA, preventing excessive capital relief from modelling choices.",
+      difficulty: "application"
     }
   ]}
 />

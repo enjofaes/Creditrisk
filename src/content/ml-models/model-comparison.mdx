@@ -86,6 +86,42 @@ The ML uplift is most justified when: (1) the Gini improvement exceeds 5 points,
       correctIndex: 1,
       explanation: "Scale and complexity are the key drivers. Large portfolios generate enough data for complex models to generalise. Non-linear interactions give XGBoost its edge. The SHAP infrastructure requirement is non-trivial — small teams without it cannot justify the complexity.",
       difficulty: "analysis"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A bank's logistic regression champion achieves Gini = 0.42 with an approval rate of 68%. An XGBoost challenger achieves Gini = 0.47 at the same approval rate. Approximately how much economic value does the 5-point Gini improvement represent?",
+      options: [
+        "None — Gini differences below 10 points are statistically insignificant",
+        "It depends on portfolio size: on a 50,000-application portfolio with average EL of $800 per applicant, a 5-point Gini improvement can reduce bad debt losses by several million dollars annually",
+        "Exactly 5% reduction in expected losses",
+        "It cannot be quantified — Gini is a rank-ordering metric with no monetary interpretation"
+      ],
+      correctIndex: 1,
+      explanation: "Gini improvements translate to economic value through better risk segmentation: riskier applicants are correctly declined and safer applicants approved. On a large portfolio, even a few percentage points of Gini improvement means fewer unexpected defaults and more precisely priced credit. The exact value depends on portfolio size, average EL, and the shape of the score-to-risk distribution — but it can easily represent millions of dollars annually on large portfolios. Quantifying this is a key part of the business case for ML adoption.",
+      difficulty: "application"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "Neural networks consistently outperform XGBoost on credit risk tabular datasets when sufficient training data is available.",
+      correctAnswer: false,
+      explanation: "Research (notably Grinsztajn et al., 2022, 'Why do tree-based models still outperform deep learning on tabular data?') shows that gradient boosting frequently matches or outperforms neural networks on tabular data typical of credit risk. Neural networks are more sensitive to feature engineering, require more careful hyperparameter tuning, and struggle with the irregular feature distributions and mixed types common in credit datasets. Neural networks offer advantages mainly through entity embeddings for high-cardinality categoricals and multi-task learning scenarios.",
+      difficulty: "recall"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A bank in the EU wants to deploy an XGBoost model for consumer credit decisions. Under the EU AI Act (2024), credit scoring systems are classified as high-risk AI. Which additional obligation does this create compared to deploying a logistic regression model?",
+      options: [
+        "No additional obligations — the EU AI Act does not apply to credit models approved by national regulators",
+        "The bank must register the system in the EU AI Act database, conduct conformity assessments, ensure human oversight, and maintain detailed technical documentation including explainability mechanisms",
+        "XGBoost is explicitly prohibited for consumer credit under the EU AI Act",
+        "The bank must obtain prior approval from the European Central Bank before deployment"
+      ],
+      correctIndex: 1,
+      explanation: "The EU AI Act classifies credit scoring systems as high-risk AI, triggering obligations including: registration in the EU database, conformity assessment, risk management system, data governance documentation, transparency obligations, human oversight mechanisms, and ongoing monitoring. While logistic regression also faces these requirements, XGBoost's opacity makes the explainability and human oversight requirements harder to satisfy, reinforcing the need for SHAP-based explanations and robust override processes.",
+      difficulty: "analysis"
     }
   ]}
 />

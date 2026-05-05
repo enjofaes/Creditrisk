@@ -95,6 +95,42 @@ Where $A$ and $B$ are fitted on a held-out calibration set.
       correctIndex: 1,
       explanation: "Tree-based methods find optimal split points regardless of feature scale. Neural networks use gradient descent, where large differences in feature magnitude cause uneven gradient steps and slow or unstable convergence. Standardisation ensures all features contribute comparably.",
       difficulty: "application"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "Dropout regularisation in a credit risk neural network works by:",
+      options: [
+        "Removing features with low predictive importance during training",
+        "Randomly setting a fraction of neuron activations to zero during each training batch",
+        "Excluding defaulted borrowers from certain training batches to balance classes",
+        "Dropping observations with missing values from the training set"
+      ],
+      correctIndex: 1,
+      explanation: "Dropout randomly deactivates neurons (sets their output to zero) during each forward pass of training, with a fixed probability p (typically 0.2-0.5). This prevents co-adaptation of neurons and forces the network to learn redundant representations. At inference time, all neurons are active but their outputs are scaled by (1-p). Dropout is particularly useful in credit risk where sample sizes may be moderate and overfitting is a concern.",
+      difficulty: "recall"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "A neural network trained for credit scoring with binary cross-entropy loss will automatically produce well-calibrated PD estimates that can be used directly for IFRS 9 provisioning.",
+      correctAnswer: false,
+      explanation: "Neural networks trained with cross-entropy loss learn to rank borrowers (discrimination) but do not guarantee calibrated probability estimates. The sigmoid output may be systematically too high or too low, particularly in the tails. For IFRS 9, which requires accurate forward-looking PD estimates, post-hoc calibration using Platt scaling or isotonic regression on a held-out calibration set is necessary before the outputs can be used as regulatory PDs.",
+      difficulty: "application"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A bank is building a neural network to predict PD for a mortgage portfolio where borrower postcodes have 8,000 unique values. Compared to one-hot encoding, entity embeddings offer which primary advantage?",
+      options: [
+        "Entity embeddings require no training data — they are pre-specified by the bank",
+        "Entity embeddings learn a compact dense representation that captures geographic similarity, reducing the input dimension from 8,000 to a small d",
+        "Entity embeddings automatically handle postcode boundary changes without retraining",
+        "Entity embeddings always outperform WoE encoding for geographic variables"
+      ],
+      correctIndex: 1,
+      explanation: "One-hot encoding 8,000 postcodes produces an 8,000-dimensional sparse input vector, which is computationally expensive and creates a massive parameter space. Entity embeddings map each postcode to a dense vector of dimension d (e.g., d = 50), reducing dimensionality by 160x. Crucially, the embedding geometry is learned — nearby postcodes with similar risk profiles end up with similar embedding vectors — capturing spatial credit risk patterns that one-hot encoding treats as entirely independent.",
+      difficulty: "analysis"
     }
   ]}
 />

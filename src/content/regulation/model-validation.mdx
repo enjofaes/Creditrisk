@@ -97,6 +97,42 @@ An independent model validation function runs monthly monitoring reports:
       correctIndex: 1,
       explanation: "Outcomes analysis (back-testing) compares model predictions to actual realised outcomes. This is distinct from conceptual soundness (checking assumptions and methodology) and use review (checking appropriate application). Comparing predicted vs actual default rates is the most direct form of outcomes analysis.",
       difficulty: "recall"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A validator builds a benchmark model using logistic regression with a limited set of standard bureau variables to challenge the developer's XGBoost model. The XGBoost model achieves Gini = 0.51 while the benchmark achieves Gini = 0.49. What is the most appropriate conclusion?",
+      options: [
+        "The XGBoost model should be rejected — it is too complex for a 2-point Gini uplift",
+        "The XGBoost model offers modest discrimination uplift over a simple benchmark; the validator should examine whether the additional complexity is justified and whether the uplift is robust across time periods",
+        "The XGBoost model passes validation — any positive Gini uplift confirms it is superior",
+        "The benchmark should replace the developer's model — simpler models are always preferred"
+      ],
+      correctIndex: 1,
+      explanation: "Benchmarking is a validation tool, not a pass/fail test. A 2-point Gini uplift over a simple benchmark is modest but not conclusive. The validator must assess whether the uplift is consistent across out-of-time samples, whether it persists after adjusting for overfitting, and whether the XGBoost model's complexity is justified given regulatory explainability requirements. The comparison informs the validator's opinion but does not mechanically determine the outcome.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "Under SS1/23 (the UK PRA's model risk management supervisory statement), all models must be reviewed by the independent validation function at least annually, regardless of their materiality.",
+      correctAnswer: false,
+      explanation: "SS1/23 requires banks to maintain a model inventory and apply a risk-based validation approach proportional to model materiality and risk. High-materiality models (e.g., IRB capital models) require more frequent and in-depth validation, while low-materiality models may be reviewed less frequently. A blanket annual requirement for all models regardless of materiality would be disproportionately burdensome and is not mandated.",
+      difficulty: "application"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "Ongoing monitoring of a PD model reveals that its PSI has been 0.08 for 18 months, but the Gini coefficient has declined from 0.45 to 0.37 over the same period. What does this combination of results suggest?",
+      options: [
+        "The model is stable — PSI below 0.10 confirms no action is required",
+        "The population has not shifted significantly, but the model's ability to rank borrowers by risk has genuinely deteriorated — suggesting that the relationship between the features and default has changed",
+        "The Gini decline is expected seasonal variation and can be ignored",
+        "PSI and Gini are measuring the same thing — one of the readings must be incorrect"
+      ],
+      correctIndex: 1,
+      explanation: "PSI below 0.10 indicates the input score distribution has not shifted materially, meaning the same types of applicants are being scored. However, a Gini decline from 0.45 to 0.37 (an 8-point drop) on a stable population is a strong signal that the underlying relationship between the model's features and observed defaults has changed — the model's predictive structure is degrading. This can occur when economic conditions alter which factors drive default, or when lender behaviour changes. The combination requires investigation and likely model recalibration or redevelopment.",
+      difficulty: "analysis"
     }
   ]}
 />

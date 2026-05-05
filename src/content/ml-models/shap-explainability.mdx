@@ -103,6 +103,42 @@ Document both global feature importance (SHAP means) in your model documentation
       correctIndex: 0,
       explanation: "In a SHAP beeswarm plot, point color represents feature value (red=high, blue=low) and x-position represents SHAP value. High feature values at positive SHAP = high values of this feature push predictions toward default.",
       difficulty: "application"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A credit analyst uses SHAP to explain why an application was rejected. The waterfall plot shows: base value = -2.1 log-odds, 'prior_delinquencies' SHAP = +1.8, 'debt_to_income' SHAP = +0.9, 'employment_tenure' SHAP = -0.4. What is the model's final log-odds for this borrower?",
+      options: [
+        "2.2 log-odds",
+        "0.2 log-odds",
+        "4.8 log-odds",
+        "-2.1 log-odds"
+      ],
+      correctIndex: 1,
+      explanation: "SHAP values sum additively: final log-odds = base + sum(SHAP values) = -2.1 + 1.8 + 0.9 + (-0.4) = 0.2 log-odds. A positive log-odds corresponds to PD > 50%, justifying rejection. The additivity property — guaranteed by the SHAP framework — allows the analyst to attribute the decision precisely to each feature's contribution.",
+      difficulty: "application"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "Global SHAP feature importance, computed as the mean absolute SHAP value across all borrowers, is equivalent to the feature importance reported by XGBoost's built-in 'gain' metric.",
+      correctAnswer: false,
+      explanation: "XGBoost's built-in gain importance measures how much each feature reduces the loss when used in a split, averaged over all trees. Mean absolute SHAP values measure the average magnitude of each feature's contribution to individual predictions. These metrics can rank features differently — SHAP is generally preferred for interpretability because it has a theoretically grounded connection to individual predictions, whereas gain can be misleading for features used in many shallow splits.",
+      difficulty: "analysis"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "A bank uses SHAP explanations to provide adverse action notices to declined applicants. The top reason code is 'high outstanding_debt SHAP = +2.3'. Which regulatory requirement does this practice most directly address?",
+      options: [
+        "Basel Pillar 3 public disclosure requirements",
+        "GDPR Article 22 and ECOA/Regulation B right-to-explanation for automated credit decisions",
+        "IFRS 9 forward-looking provisioning requirements",
+        "SR 11-7 model risk management framework"
+      ],
+      correctIndex: 1,
+      explanation: "GDPR Article 22 (EU) gives individuals the right to obtain an explanation of automated decisions. In the US, the Equal Credit Opportunity Act (ECOA) and Regulation B require lenders to provide specific reasons for adverse credit decisions. SHAP-based reason codes — identifying which features most increased the predicted default probability — directly satisfy these explanation requirements by giving applicants actionable, feature-level reasons for their decision.",
+      difficulty: "recall"
     }
   ]}
 />

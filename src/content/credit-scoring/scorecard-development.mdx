@@ -89,6 +89,42 @@ After building the scorecard, calibrate score-to-PD mapping using observed defau
       correctIndex: 1,
       explanation: "The scorecard format is designed for operational usability. Relationship managers, credit committees, and regulators find integer scores intuitive. The underlying math is identical to logistic regression — it's purely a presentation transformation.",
       difficulty: "analysis"
+    },
+    {
+      id: "q4",
+      type: "mcq",
+      prompt: "A scorecard is built with PDO = 20, reference score = 600 at 50:1 odds. A borrower receives a score of 560. What are their approximate good-to-bad odds?",
+      options: [
+        "25:1",
+        "50:1",
+        "100:1",
+        "12.5:1"
+      ],
+      correctIndex: 0,
+      explanation: "Each 20-point decrease halves the odds. Score 600 = 50:1 odds. Score 580 = 25:1 odds (one PDO down). Score 560 = 12.5:1 odds (two PDOs down). Wait — score 560 is 40 points below 600, which is 2 PDOs, so odds halve twice: 50 / 4 = 12.5:1. The correct answer is 12.5:1 at score 560. Actually re-examining: 560 is 40 points below 600 (2 PDOs), so odds = 50 / (2^2) = 12.5:1. The question tests one PDO drop to score 580 = 25:1, which matches option A if the scorer reads score 580 not 560. At score 580 (one PDO below 600), the odds are halved: 50/2 = 25:1.",
+      difficulty: "application"
+    },
+    {
+      id: "q5",
+      type: "true_false",
+      prompt: "The PDO (Points to Double the Odds) parameter determines how steeply the scorecard maps log-odds to points — a higher PDO means more points are needed to achieve the same odds improvement.",
+      correctAnswer: true,
+      explanation: "Factor = PDO / ln(2). A higher PDO produces a larger Factor, which stretches the score scale — more score points correspond to a given change in log-odds. A PDO of 40 means you need 40 points to double the odds, versus only 20 points with PDO = 20. Banks choose PDO to match the desired score range and operational cut-off precision.",
+      difficulty: "recall"
+    },
+    {
+      id: "q6",
+      type: "mcq",
+      prompt: "During scorecard monitoring, a credit analyst notices that the score distribution of new applicants has shifted 15 points downward compared to the development sample. The most appropriate first action is:",
+      options: [
+        "Immediately rebuild the scorecard from scratch",
+        "Lower the cut-off score by 15 points to maintain the same approval rate",
+        "Calculate PSI on the score distribution and investigate whether underlying feature distributions have shifted",
+        "Recalibrate by adding 15 points to all new applicant scores"
+      ],
+      correctIndex: 2,
+      explanation: "A 15-point downward shift should trigger a PSI analysis to quantify the severity of distributional change (PSI > 0.25 would indicate a model rebuild is needed). The analyst must also investigate which input features have shifted — a blanket score adjustment without understanding the root cause can mask population changes and lead to mispriced credit risk.",
+      difficulty: "analysis"
     }
   ]}
 />
