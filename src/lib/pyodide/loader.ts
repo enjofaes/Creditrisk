@@ -12,7 +12,7 @@ export async function getPyodide(): Promise<PyodideInterface> {
   loadPromise = (async () => {
     await injectScript(`${PYODIDE_CDN_URL}pyodide.js`);
     const instance = await window.loadPyodide({ indexURL: PYODIDE_CDN_URL });
-    await instance.loadPackagesFromImports(BUNDLED_PACKAGES.join("\n"));
+    await instance.loadPackage(BUNDLED_PACKAGES);
     await instance.runPythonAsync(PLOT_CAPTURE_SETUP);
     pyodideInstance = instance;
     return instance;
@@ -53,8 +53,13 @@ export async function runCode(code: string): Promise<RunResult> {
     error = String(e);
   }
 
-  const figuresJson = await py.runPythonAsync("_capture_figures()") as string;
-  const figures: string[] = JSON.parse(figuresJson);
+  let figures: string[] = [];
+  try {
+    const figuresJson = await py.runPythonAsync("_capture_figures()") as string;
+    figures = JSON.parse(figuresJson);
+  } catch {
+    // _capture_figures may not be defined if init failed
+  }
 
   return {
     stdout: stdoutLines.join("\n"),
