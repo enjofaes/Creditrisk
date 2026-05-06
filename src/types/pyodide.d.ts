@@ -2,6 +2,7 @@ export interface PyodideInterface {
   runPython: (code: string) => unknown;
   runPythonAsync: (code: string) => Promise<unknown>;
   loadPackagesFromImports: (code: string) => Promise<void>;
+  loadPackage: (names: string | string[]) => Promise<void>;
   globals: {
     get: (key: string) => unknown;
     set: (key: string, value: unknown) => void;

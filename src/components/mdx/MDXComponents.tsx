@@ -2,6 +2,7 @@ import { Callout } from "./Callout";
 import { CodeBlock } from "./CodeBlock";
 import { NotebookDownload } from "@/components/notebook/NotebookDownload";
 import { QuizBlock } from "@/components/quiz/QuizBlock";
+import { QuizDemo } from "@/components/quiz/QuizDemo";
 import { ExpectedLossChart } from "@/components/charts/ExpectedLossChart";
 import { RocCurveChart } from "@/components/charts/RocCurveChart";
 import { WoeChart } from "@/components/charts/WoeChart";
@@ -108,6 +109,7 @@ export const mdxComponents = {
   Callout,
   NotebookDownload,
   QuizBlock,
+  QuizDemo,
   PythonRunner,
   PythonDemo,
   ExpectedLossChart,
