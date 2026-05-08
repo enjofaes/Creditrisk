@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, GitBranch } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { XpDisplay } from "@/components/gamification/XpDisplay";
 import { cn } from "@/lib/utils";
 import { MODULES } from "@/lib/content/modules";
 
@@ -35,6 +36,7 @@ export function TopNav() {
         </nav>
 
         <div className="flex items-center gap-2 ml-auto">
+          <XpDisplay />
           <Link
             href="https://github.com/enjofaes/creditrisk"
             target="_blank"
